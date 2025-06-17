@@ -1,7 +1,6 @@
-import { LucideIcon } from 'lucide-react';
 import * as React from 'react';
-import { IconType } from 'react-icons';
 
+import { IconComponent, renderIcon } from '@/lib/icon-utils';
 import { cn } from '@/lib/utils';
 
 import UnstyledLink, {
@@ -19,7 +18,7 @@ const IconLinkVariant = [
 type IconLinkProps = {
   isDarkBg?: boolean;
   variant?: (typeof IconLinkVariant)[number];
-  icon?: IconType | LucideIcon;
+  icon?: IconComponent;
   classNames?: {
     icon?: string;
   };
@@ -88,7 +87,7 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
         )}
         {...rest}
       >
-        {Icon && <Icon size='1em' className={cn(classNames?.icon)} />}
+        {Icon && renderIcon(Icon, { size: '1em', className: cn(classNames?.icon) })}
       </UnstyledLink>
     );
   }

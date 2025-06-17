@@ -1,7 +1,6 @@
-import { LucideIcon } from 'lucide-react';
 import * as React from 'react';
-import { IconType } from 'react-icons';
 
+import { IconComponent, renderIcon } from '@/lib/icon-utils';
 import { cn } from '@/lib/utils';
 
 import UnstyledLink, {
@@ -21,8 +20,8 @@ type ButtonLinkProps = {
   isDarkBg?: boolean;
   variant?: (typeof ButtonLinkVariant)[number];
   size?: (typeof ButtonLinkSize)[number];
-  leftIcon?: IconType | LucideIcon;
-  rightIcon?: IconType | LucideIcon;
+  leftIcon?: IconComponent;
+  rightIcon?: IconComponent;
   classNames?: {
     leftIcon?: string;
     rightIcon?: string;
@@ -106,16 +105,16 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               size === 'sm' && 'mr-1.5',
             ])}
           >
-            <LeftIcon
-              size='1em'
-              className={cn(
+            {renderIcon(LeftIcon, {
+              size: '1em',
+              className: cn(
                 [
                   size === 'base' && 'md:text-md text-md',
                   size === 'sm' && 'md:text-md text-sm',
                 ],
                 classNames?.leftIcon
-              )}
-            />
+              ),
+            })}
           </div>
         )}
         {children}
@@ -126,16 +125,16 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               size === 'sm' && 'ml-1.5',
             ])}
           >
-            <RightIcon
-              size='1em'
-              className={cn(
+            {renderIcon(RightIcon, {
+              size: '1em',
+              className: cn(
                 [
                   size === 'base' && 'text-md md:text-md',
                   size === 'sm' && 'md:text-md text-sm',
                 ],
                 classNames?.rightIcon
-              )}
-            />
+              ),
+            })}
           </div>
         )}
       </UnstyledLink>

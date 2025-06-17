@@ -87,7 +87,8 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
         )}
         {...rest}
       >
-        {Icon && renderIcon(Icon, { size: '1em', className: cn(classNames?.icon) })}
+        {Icon &&
+          renderIcon(Icon, { size: '1em', className: cn(classNames?.icon) })}
       </UnstyledLink>
     );
   }

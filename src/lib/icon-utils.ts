@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react';
-import type { ComponentClass,FunctionComponent } from 'react';
+import type { ComponentClass, FunctionComponent } from 'react';
 import * as React from 'react';
-import { IconBaseProps,IconType } from 'react-icons';
+import { IconBaseProps, IconType } from 'react-icons';
 
 export type IconComponent = LucideIcon | IconType;
 
@@ -18,7 +18,9 @@ export function renderIcon(Icon: IconComponent, props: IconProps) {
     return React.createElement(Icon as LucideIcon, props);
   } else {
     // Cast IconType to the correct React component type
-    const ReactIcon = Icon as FunctionComponent<IconBaseProps> | ComponentClass<IconBaseProps>;
+    const ReactIcon = Icon as
+      | FunctionComponent<IconBaseProps>
+      | ComponentClass<IconBaseProps>;
     return React.createElement(ReactIcon, props);
   }
-} 
+}

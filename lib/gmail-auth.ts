@@ -24,6 +24,14 @@ export async function getAccessToken(code: string) {
   return tokens;
 }
 
+export async function getTokensFromCode(code: string) {
+  const { tokens } = await oauth2Client.getToken(code);
+  // Save tokens to file
+  fs.writeFileSync('token.json', JSON.stringify(tokens, null, 2));
+  console.log('✅ Tokens saved to token.json');
+  return tokens;
+}
+
 function loadTokensFromFile() {
   try {
     if (!fs.existsSync('token.json')) {
@@ -39,6 +47,7 @@ function loadTokensFromFile() {
     return null;
   }
 }
+
 
 export function createGmailClient() {
   const tokens = loadTokensFromFile();

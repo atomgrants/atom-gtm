@@ -37,3 +37,10 @@ export async function getLatestEmails(gmail: any, count = 5) {
 
   return messages;
 }
+export async function getSingleEmail(gmail: any, id: string) {
+  const response = await gmail.users.messages.get({
+    userId: "me",
+    id: id,
+  });
+  return response.data;
+}

@@ -19,8 +19,14 @@ export async function GET(request: Request) {
     <p> test gmai api</p>
     <button onclick="testGmailApi()">Test Gmail API</button>
     <script>
-      function testGmailApi() {
-        fetch("/api/gmail")
+      async function testGmailApi() {
+        try {
+          const response = await fetch("/api/gmail");
+          const data = await response.json();
+          alert(JSON.stringify(data, null, 2));
+        } catch (error) {
+          alert("Error calling Gmail API: " + error);
+        }
       }
     </script>
   </body>

@@ -6,6 +6,7 @@ export async function testConnection(gmail: any): Promise<number> {
   return response.data.resultSizeEstimate || 0;
 }
 
+
 export async function getLatestEmails(gmail: any, count = 5) {
   const response = await gmail.users.messages.list({
     userId: "me",

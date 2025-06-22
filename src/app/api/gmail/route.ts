@@ -1,18 +1,21 @@
 import { getLatestEmails, testConnection } from 'lib/gmail-api';
 import { NextResponse } from 'next/server';
 
-import { createGmailClient,getAuthUrl } from '../../../../lib/gmail-auth';
+import { createGmailClient, getAuthUrl } from '../../../../lib/gmail-auth';
 
 export async function GET(request: Request) {
   try {
 
-    const {searchParams} = new URL(request.url);
+    const { searchParams } = new URL(request.url);
     const messageId = searchParams.get('messageId');
 
     // Try to create Gmail client (will throw if no tokens)
     const gmail = createGmailClient();
 
-    if(messageId){
+    //display gmail structure
+    console.log(gmail);
+
+    if (messageId) {
       const message = await gmail.users.messages.get({
         userId: 'me',
         id: messageId,
@@ -30,7 +33,7 @@ export async function GET(request: Request) {
 
 
     console.log('Recent emails:', JSON.stringify(recentEmails, null, 2));
-    
+
     return NextResponse.json({
       success: true,
       userEmail: email,

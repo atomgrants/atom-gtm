@@ -40,26 +40,34 @@ export async function getLatestEmails(gmail: any, count = 5) {
   return messages;
 }
 export async function getSingleEmail(gmail: any) {
-  const response = await gmail.users.messages.get({
+  const response = await gmail.users.messages.list({
     userId: "me",
     maxResults: 1,
+    q: "category:primary",
   });
 
-  const msg = await response.data.messages.map(async (msg: { id: string }) => {
+  // Check if there are any messages
+  if (!response.data.messages || response.data.messages.length === 0) {
+    return [];
+  }
+
+  const msg = await Promise.all(response.data.messages.map(async (msg: { id: string }) => {
     const msgDetail = await gmail.users.messages.get({
       userId: "me",
       id: msg.id,
-      format: "metadata",
-      metadataHeaders: ["subject", "from", "date"],
+      format: "full",
     });
+    const { text, html } = extractEmailBody(msgDetail.data.payload);
     return {
       id: msg.id, 
       snippet: msgDetail.data.snippet,
-      payload: msgDetail.data.payload, 
+      payload: msgDetail.data.payload,
+      text: text, //text version of the email body
+      html: html, //html version of the email body
       headers: msgDetail.data.payload?.headers, //contain subject, from, date
       internalDate: msgDetail.data.internalDate,
     }
-  });
+  }));
   return msg;
 }
 

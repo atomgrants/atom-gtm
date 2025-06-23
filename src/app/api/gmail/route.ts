@@ -13,7 +13,9 @@ export async function GET(request: Request) {
     const gmail = createGmailClient();
 
     //display gmail structure
-    console.log(gmail);
+    console.log('Gmail structure:--------------------------------');
+    console.log(gmail.users.messages.list);
+    console.log('------------------------------------------------');
 
     if (messageId) {
       const message = await gmail.users.messages.get({
@@ -33,6 +35,7 @@ export async function GET(request: Request) {
 
 
     console.log('Recent emails:', JSON.stringify(recentEmails, null, 2));
+    console.log('------------------------------------------------');
 
     return NextResponse.json({
       success: true,

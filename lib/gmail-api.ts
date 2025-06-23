@@ -13,6 +13,7 @@ export async function getLatestEmails(gmail: any, count = 5) {
     maxResults: count,
   });
 
+  //check if there are any messages
   if (!response.data.messages || response.data.messages.length === 0) {
     return [];
   }
@@ -38,10 +39,54 @@ export async function getLatestEmails(gmail: any, count = 5) {
 
   return messages;
 }
-export async function getSingleEmail(gmail: any, id: string) {
+export async function getSingleEmail(gmail: any) {
   const response = await gmail.users.messages.get({
     userId: "me",
-    id: id,
+    maxResults: 1,
   });
-  return response.data;
+
+  const msg = await response.data.messages.map(async (msg: { id: string }) => {
+    const msgDetail = await gmail.users.messages.get({
+      userId: "me",
+      id: msg.id,
+      format: "metadata",
+      metadataHeaders: ["subject", "from", "date"],
+    });
+    return {
+      id: msg.id, 
+      snippet: msgDetail.data.snippet,
+      payload: msgDetail.data.payload, 
+      headers: msgDetail.data.payload?.headers, //contain subject, from, date
+      internalDate: msgDetail.data.internalDate,
+    }
+  });
+  return msg;
+}
+
+function extractEmailBody(payload: any): { text: string; html: string } {
+  let textBody = "";
+  let htmlBody = "";
+
+  // Simple email (body directly in payload)
+  if (payload.body && payload.body.data) {
+    const decoded = Buffer.from(payload.body.data, 'base64').toString('utf-8');
+    if (payload.mimeType === 'text/plain') {
+      textBody = decoded;
+    } else if (payload.mimeType === 'text/html') {
+      htmlBody = decoded;
+    }
+  }
+
+  // Multi-part email (text + html versions)
+  if (payload.parts) {
+    payload.parts.forEach((part: any) => {
+      if (part.mimeType === 'text/plain' && part.body.data) {
+        textBody = Buffer.from(part.body.data, 'base64').toString('utf-8');
+      } else if (part.mimeType === 'text/html' && part.body.data) {
+        htmlBody = Buffer.from(part.body.data, 'base64').toString('utf-8');
+      }
+    });
+  }
+
+  return { text: textBody, html: htmlBody };
 }

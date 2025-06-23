@@ -73,9 +73,26 @@ export function isTokenExpired(tokens: any): boolean {
   return Date.now() >= tokens.expiry_date;
 }
 
-export function canCreateGmailClient(): boolean {
+export async function canCreateGmailClient(): Promise<boolean> {
   if (!hasValidTokens()) return false;
 
   const tokens = loadTokensFromFile();
-  return !isTokenExpired(tokens);
+  if (!tokens) return false;
+
+  // If token is expired, try to refresh it
+  if (isTokenExpired(tokens)) {
+    try {
+      oauth2Client.setCredentials(tokens);
+      const newTokens = await oauth2Client.refreshAccessToken();
+      // Save the refreshed tokens
+      fs.writeFileSync('token.json', JSON.stringify(newTokens.credentials, null, 2));
+      console.log('✅ Tokens refreshed successfully');
+      return true;
+    } catch (error) {
+      console.error('Error refreshing tokens:', error);
+      return false;
+    }
+  }
+
+  return true;
 }

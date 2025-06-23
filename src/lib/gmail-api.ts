@@ -59,7 +59,7 @@ export async function getSingleEmail(gmail: any) {
     });
     const { text, html } = extractEmailBody(msgDetail.data.payload);
     return {
-      id: msg.id, 
+      id: msg.id,
       snippet: msgDetail.data.snippet,
       payload: msgDetail.data.payload,
       text: text, //text version of the email body
@@ -97,4 +97,29 @@ function extractEmailBody(payload: any): { text: string; html: string } {
   }
 
   return { text: textBody, html: htmlBody };
+}
+
+export function extractName(fromHeader: string): string {
+  if (!fromHeader) return '';
+  
+  // "GitHub <noreply@github.com>" -> "GitHub"
+  if (fromHeader.includes('<')) {
+    return fromHeader.split('<')[0].trim();
+  }
+  
+  // Fallback: if no <>, use part before @
+  return fromHeader.split('@')[0];
+}
+
+export function extractEmail(fromHeader: string): string {
+  if (!fromHeader) return '';
+  
+  // Extract email between < and >
+  const match = fromHeader.match(/<([^>]+)>/);
+  if (match) {
+    return match[1]; // "noreply@github.com"
+  }
+  
+  // Fallback: assume the whole string is an email
+  return fromHeader.trim();
 }

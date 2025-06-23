@@ -1,7 +1,7 @@
-import { getLatestEmails, testConnection, getSingleEmail } from 'lib/gmail-api';
 import { NextResponse } from 'next/server';
 
-import { createGmailClient, getAuthUrl } from '../../../../lib/gmail-auth';
+import { getSingleEmail,testConnection } from '@/lib/gmail-api';
+import { createGmailClient, getAuthUrl } from '@/lib/gmail-auth';
 
 export async function GET(request: Request) {
   try {
@@ -11,11 +11,6 @@ export async function GET(request: Request) {
 
     // Try to create Gmail client (will throw if no tokens)
     const gmail = createGmailClient();
-
-    //display gmail structure
-    console.log('Gmail structure:--------------------------------');
-    console.log(gmail.users.messages.list);
-    console.log('------------------------------------------------');
 
     if (messageId) {
       const message = await gmail.users.messages.get({

@@ -57,3 +57,25 @@ export function createGmailClient() {
   oauth2Client.setCredentials(tokens);
   return google.gmail({ version: "v1", auth: oauth2Client });
 }
+
+/*api health check*/
+export function hasValidTokens(): boolean {
+  try {
+    const tokens = loadTokensFromFile();
+    return !!(tokens?.access_token && tokens?.refresh_token);
+  } catch {
+    return false;
+  }
+}
+
+export function isTokenExpired(tokens: any): boolean {
+  if (!tokens?.expiry_date) return false;
+  return Date.now() >= tokens.expiry_date;
+}
+
+export function canCreateGmailClient(): boolean {
+  if (!hasValidTokens()) return false;
+
+  const tokens = loadTokensFromFile();
+  return !isTokenExpired(tokens);
+}

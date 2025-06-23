@@ -65,7 +65,7 @@ export async function getSingleEmail(gmail: any) {
       text: text, //text version of the email body
       html: html, //html version of the email body
       headers: msgDetail.data.payload?.headers, //contain subject, from, date
-      internalDate: msgDetail.data.internalDate,
+      internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
     }
   }));
   return msg;

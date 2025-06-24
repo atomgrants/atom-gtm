@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { getSingleEmail,testConnection } from '@/lib/gmail-api';
+import { getEmails,testConnection } from '@/lib/gmail-api';
 import { createGmailClient, getAuthUrl } from '@/lib/gmail-auth';
 
 export async function GET(request: Request) {
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     //original logic
     const email = await testConnection(gmail);
     //const recentEmails = await getLatestEmails(gmail, 1);
-    const recentEmails = await getSingleEmail(gmail);
+    const recentEmails = await getEmails(gmail);
 
 
     console.log('Recent emails:', JSON.stringify(recentEmails, null, 2));

@@ -6,7 +6,7 @@ export async function testConnection(gmail: any): Promise<number> {
   return response.data.resultSizeEstimate || 0;
 }
 
-export async function getSingleEmail(gmail: any) {
+export async function getEmails(gmail: any) {
   const response = await gmail.users.messages.list({
     userId: "me",
     maxResults: 1,

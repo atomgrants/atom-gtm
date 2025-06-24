@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { extractEmail, extractName, getSingleEmail } from "@/lib/gmail-api";
+import { extractEmail, extractName, getEmails } from "@/lib/gmail-api";
 import { canCreateGmailClient, createGmailClient } from "@/lib/gmail-auth";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
       //fetch single email from gmail (testing)
       const gmail = createGmailClient();
-      const emails = await getSingleEmail(gmail);
+      const emails = await getEmails(gmail);
       console.log('Emails fetched:', emails.length);
 
       //transform to db format 

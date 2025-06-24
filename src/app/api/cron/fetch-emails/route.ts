@@ -7,30 +7,30 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { EmailInsert } from "@/types/email";
 
 export async function GET(request: Request) {
-  console.log('🔍 Starting fetch-emails API call');
+  console.log('Starting fetch-emails API call');
   
   // check client connection  
   try{
-    console.log('🔍 Checking Gmail client connection...');
+    console.log('Checking Gmail client connection...');
     const canConnect = await canCreateGmailClient();
-    console.log('🔍 Gmail client connection result:', canConnect);
+    console.log('Gmail client connection result:', canConnect);
     
     if(!canConnect){
-      console.log('❌ Gmail client connection failed');
+      console.log('Gmail client connection failed');
       return NextResponse.json({
         success: false,
         message: 'Gmail client connection failed',
       }, { status: 500 });
     }
 
-    console.log('✅ Gmail client connection successful');
+    console.log('Gmail client connection successful');
 
       //fetch single email from gmail (testing)
-      console.log('🔍 Creating Gmail client...');
+      console.log('Creating Gmail client...');
       const gmail = createGmailClient();
-      console.log('🔍 Fetching emails from Gmail...');
+      console.log('Fetching emails from Gmail...');
       const emails = await getSingleEmail(gmail);
-      console.log('🔍 Emails fetched:', emails.length);
+      console.log('Emails fetched:', emails.length);
 
       //transform to db format 
       const emailData: EmailInsert[] = emails.map((email:any) => {

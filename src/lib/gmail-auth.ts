@@ -20,7 +20,7 @@ export async function getAccessToken(code: string) {
   const { tokens } = await oauth2Client.getToken(code);
   // Save tokens to file
   fs.writeFileSync('token.json', JSON.stringify(tokens, null, 2));
-  console.log('✅ Tokens saved to token.json');
+  console.log('Tokens saved to token.json');
   return tokens;
 }
 
@@ -28,7 +28,7 @@ export async function getTokensFromCode(code: string) {
   const { tokens } = await oauth2Client.getToken(code);
   // Save tokens to file
   fs.writeFileSync('token.json', JSON.stringify(tokens, null, 2));
-  console.log('✅ Tokens saved to token.json');
+  console.log('Tokens saved to token.json');
   return tokens;
 }
 
@@ -86,7 +86,7 @@ export async function canCreateGmailClient(): Promise<boolean> {
       const newTokens = await oauth2Client.refreshAccessToken();
       // Save the refreshed tokens
       fs.writeFileSync('token.json', JSON.stringify(newTokens.credentials, null, 2));
-      console.log('✅ Tokens refreshed successfully');
+      console.log('Tokens refreshed successfully');
       return true;
     } catch (error) {
       console.error('Error refreshing tokens:', error);

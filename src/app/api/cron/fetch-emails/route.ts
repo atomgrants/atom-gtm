@@ -11,9 +11,7 @@ export async function GET(request: Request) {
   
   // check client connection  
   try{
-    console.log('Checking Gmail client connection...');
     const canConnect = await canCreateGmailClient();
-    console.log('Gmail client connection result:', canConnect);
     
     if(!canConnect){
       console.log('Gmail client connection failed');
@@ -23,12 +21,8 @@ export async function GET(request: Request) {
       }, { status: 500 });
     }
 
-    console.log('Gmail client connection successful');
-
       //fetch single email from gmail (testing)
-      console.log('Creating Gmail client...');
       const gmail = createGmailClient();
-      console.log('Fetching emails from Gmail...');
       const emails = await getSingleEmail(gmail);
       console.log('Emails fetched:', emails.length);
 

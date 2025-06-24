@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getTokensFromCode } from "../../../../../../lib/gmail-auth";
+import { getTokensFromCode } from "@/lib/gmail-auth";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);

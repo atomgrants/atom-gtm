@@ -57,3 +57,42 @@ export function createGmailClient() {
   oauth2Client.setCredentials(tokens);
   return google.gmail({ version: "v1", auth: oauth2Client });
 }
+
+/*api health check*/
+export function hasValidTokens(): boolean {
+  try {
+    const tokens = loadTokensFromFile();
+    return !!(tokens?.access_token && tokens?.refresh_token);
+  } catch {
+    return false;
+  }
+}
+
+export function isTokenExpired(tokens: any): boolean {
+  if (!tokens?.expiry_date) return false;
+  return Date.now() >= tokens.expiry_date;
+}
+
+export async function canCreateGmailClient(): Promise<boolean> {
+  if (!hasValidTokens()) return false;
+
+  const tokens = loadTokensFromFile();
+  if (!tokens) return false;
+
+  // If token is expired, try to refresh it
+  if (isTokenExpired(tokens)) {
+    try {
+      oauth2Client.setCredentials(tokens);
+      const newTokens = await oauth2Client.refreshAccessToken();
+      // Save the refreshed tokens
+      fs.writeFileSync('token.json', JSON.stringify(newTokens.credentials, null, 2));
+      console.log('✅ Tokens refreshed successfully');
+      return true;
+    } catch (error) {
+      console.error('Error refreshing tokens:', error);
+      return false;
+    }
+  }
+
+  return true;
+}

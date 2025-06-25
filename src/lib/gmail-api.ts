@@ -55,6 +55,7 @@ export async function getEmailsTest(gmail: any, count: number, sinceDate: Date |
     maxResults: count,
     q: `after:${unixTimestamp} category:primary`,
     pageToken: pageToken,
+    format: "full",
   });
 
   // Check if there are any messages
@@ -134,3 +135,36 @@ export function extractEmail(fromHeader: string): string {
   // Fallback: assume the whole string is an email
   return fromHeader.trim();
 }
+/*
+function extractEmailBody(payload: any): { text: string; html: string } {
+  function findText(part: any): string | null {
+    if (part.mimeType === 'text/plain' && part.body && part.body.data) {
+      return Buffer.from(part.body.data, 'base64').toString('utf-8');
+    }
+    if (part.parts) {
+      for (const subPart of part.parts) {
+        const text = findText(subPart);
+        if (text) return text;
+      }
+    }
+    return null;
+  }
+
+  function findHtml(part: any): string | null {
+    if (part.mimeType === 'text/html' && part.body && part.body.data) {
+      return Buffer.from(part.body.data, 'base64').toString('utf-8');
+    }
+    if (part.parts) {
+      for (const subPart of part.parts) {
+        const html = findHtml(subPart);
+        if (html) return html;
+      }
+    }
+    return null;
+  }
+
+  const textBody = findText(payload) || '';
+  const htmlBody = findHtml(payload) || '';
+  return { text: textBody, html: htmlBody };
+}
+*/

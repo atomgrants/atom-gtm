@@ -1,10 +1,11 @@
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { getEmailsTest } from '@/lib/gmail-api';
+import { extractEmail, extractName, getEmailsTest } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
+import { NextResponse } from 'next/server';
 
 /** Merge classes with tailwind-merge with clsx full feature */
 export function cn(...inputs: ClassValue[]) {
@@ -12,25 +13,38 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**email utils***/
+/*convert email to db format*/
+export const convertEmailToDbFormat = (email: any) => {
+  const fromHeader = email.headers?.find((h: { name: string }) => h.name === 'From')?.value || '';
+  const subject = email.headers?.find((h: { name: string }) => h.name === 'Subject')?.value || '';
+  return {
+    sender_name: extractName(fromHeader),
+    sender_email_address: extractEmail(fromHeader),
+    body: email.text,
+    subject: subject,
+    date_time_sent: email.internalDate,
+    listserv_name: 'ResAdmin',
+  }
+}
 
 /*insert email into db*/
 export const insertEmail = async (email: EmailInsert) => {
-  const { data, error } = await supabaseAdmin.from('emails').insert(email);
+  const { data, error } = await supabaseAdmin.from('emails').insert(email).select();
   if (error) {
     console.error('Error inserting email:', error);
-    return {
+    return NextResponse.json({
       success: false,
       message: 'Error inserting email',
       error: error,
-    }
+    }, { status: 500 });
   }
 
   console.log('Email inserted:', data);
-  return {
+  return NextResponse.json({
     success: true,
     message: 'Email inserted',
     data: data,
-  }
+  }, { status: 200 });
 }
 
 /*get last saved email*/
@@ -74,17 +88,18 @@ export async function getNewEmails(gmail: any) {
     const result = await getEmailsTest(gmail, 50, sinceDate, pageToken);
     const { emailsList } = result;
     length = result.length;
-    attemptFetch++;
+    attemptFetch += length;
     nextPageToken = result.nextPageToken;
     for (const email of emailsList) {
-      await insertEmail(email);
+      const emailData = convertEmailToDbFormat(email);
+      await insertEmail(emailData);
     }
     allNewEmails.push(...emailsList);
     pageToken = nextPageToken;
   } while (length === 50 && nextPageToken);
 
   //return true if all emails were fetched, false otherwise
-  return attemptFetch === allNewEmails.length;
+  return {attemptFetch, allNewEmails};
 }
 
 /*to be removed*/
@@ -110,6 +125,27 @@ async function getEmailsSinceDate(gmail: any, sinceDate: Date) {
       return email.data;
     })
   );
+}
+
+function extractReplyContent(body: string): string {
+  // Common separators for replies/forwards
+  const separators = [
+    /^On .+ wrote:$/m, // Gmail, Apple Mail, etc.
+    /^From: .+$/m,     // Outlook, etc.
+    /^-----Original Message-----$/m,
+    /^---------- Forwarded message ----------$/m,
+    /^Begin forwarded message:$/m,
+  ];
+
+  let minIndex = body.length;
+  for (const sep of separators) {
+    const match = body.match(sep);
+    if (match && match.index !== undefined && match.index < minIndex) {
+      minIndex = match.index;
+    }
+  }
+  // Return everything before the first separator, trimmed
+  return body.slice(0, minIndex).trim();
 }
 
 

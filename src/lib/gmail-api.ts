@@ -40,20 +40,26 @@ export async function getEmails(gmail: any, count:number) {
   return msg;
 }
 
-export async function getEmailsTest(gmail: any, count:number, sinceDate:Date) {
+export async function getEmailsTest(gmail: any, count: number, sinceDate: Date | null, pageToken?: string) {
   //get timestamp in unix format
-  const unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
+  let unixTimestamp: number;
+  if (sinceDate === null) {
+    unixTimestamp = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
+  } else {
+    unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
+  }
 
   //get emails since date
   const response = await gmail.users.messages.list({
     userId: "me",
     maxResults: count,
     q: `after:${unixTimestamp} category:primary`,
+    pageToken: pageToken,
   });
 
   // Check if there are any messages
   if (!response.data.messages || response.data.messages.length === 0) {
-    return [];
+    return { emailsList: [], length: 0, nextPageToken: undefined };
   }
 
   const msg = await Promise.all(response.data.messages.map(async (msg: { id: string }) => {
@@ -62,7 +68,7 @@ export async function getEmailsTest(gmail: any, count:number, sinceDate:Date) {
       id: msg.id,
       format: "full",
     });
-    const { text, html } = extractEmailBody(msgDetail.data.payload);
+    const { text } = extractEmailBody(msgDetail.data.payload);
     return {
       id: msg.id,
       snippet: msgDetail.data.snippet,
@@ -72,7 +78,8 @@ export async function getEmailsTest(gmail: any, count:number, sinceDate:Date) {
       internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
     }
   }));
-  return msg;
+  //return msg, number of messages found, and nextPageToken
+  return { emailsList: msg, length: response.data.messages.length, nextPageToken: response.data.nextPageToken };
 }
 
 function extractEmailBody(payload: any): { text: string; html: string } {

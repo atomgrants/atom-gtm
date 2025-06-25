@@ -1,6 +1,7 @@
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+import { getEmailsTest } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
@@ -53,51 +54,34 @@ export async function getLastSavedEmail() {
 export async function getNewEmails(gmail: any) {
   // Get the most recent email from database
   const lastSavedEmail = await getLastSavedEmail();
-  
+  let sinceDate = null;
   if (!lastSavedEmail) {
     // No emails in DB yet - get recent emails (last 24 hours)
     console.log('No emails in database, fetching last 24 hours');
-    return getEmailsSinceDate(gmail, new Date(Date.now() - 24 * 60 * 60 * 1000));
+    sinceDate = null;
+  } else {
+    sinceDate = new Date(lastSavedEmail.date_time_sent);
+    console.log('Last saved email time:', sinceDate.toISOString());
   }
-  
-  // Convert database timestamp to Unix timestamp for Gmail query
-  const lastSavedTime = new Date(lastSavedEmail.date_time_sent);
-  const unixTimestamp = Math.floor(lastSavedTime.getTime() / 1000);
-  
-  console.log('Last saved email time:', lastSavedTime.toISOString());
-  console.log('Searching for emails after Unix timestamp:', unixTimestamp);
-  
-  const response = await gmail.users.messages.list({
-    userId: 'me',
-    q: `after:${unixTimestamp}`,
-    maxResults: 50
-  });
-  
-  const messageIds = response.data.messages || [];
-  
-  // Get full message details
-  const emails = await Promise.all(
-    messageIds.map(async (msg: { id: string }) => {
-      const email = await gmail.users.messages.get({
-        userId: 'me',
-        id: msg.id,
-        format: 'metadata',
-        metadataHeaders: ['subject', 'from', 'date']
-      });
-      return email.data;
-    })
-  );
-  
-  // Filter out emails that might have same timestamp as last saved
-  // (Gmail query is inclusive, so we might get the last saved email again)
-  const newEmails = emails.filter(email => {
-    const emailTime = new Date(parseInt(email.internalDate));
-    return emailTime > lastSavedTime;
-  });
-  
-  console.log(`Found ${emails.length} emails from query, ${newEmails.length} are actually new`);
-  
-  return newEmails;
+
+  let pageToken: string | undefined = undefined;
+  const allNewEmails: any[] = [];
+  let length = 0;
+  let nextPageToken: string | undefined = undefined;
+
+  do {
+    const result = await getEmailsTest(gmail, 50, sinceDate, pageToken);
+    const { emailsList } = result;
+    length = result.length;
+    nextPageToken = result.nextPageToken;
+    for (const email of emailsList) {
+      await insertEmail(email);
+    }
+    allNewEmails.push(...emailsList);
+    pageToken = nextPageToken;
+  } while (length === 50 && nextPageToken);
+
+  return allNewEmails;
 }
 
 async function getEmailsSinceDate(gmail: any, sinceDate: Date) {

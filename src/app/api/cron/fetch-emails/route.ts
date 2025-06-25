@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
       //fetch single email from gmail (testing)
       const gmail = createGmailClient();
-      const emails = await getEmails(gmail);
+      const emails = await getEmails(gmail, 1);
       console.log('Emails fetched:', emails.length);
 
       //transform to db format 

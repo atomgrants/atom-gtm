@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     //original logic
     const email = await testConnection(gmail);
     //const recentEmails = await getLatestEmails(gmail, 1);
-    const recentEmails = await getEmails(gmail);
+    const recentEmails = await getEmails(gmail, 2);
 
 
     console.log('Recent emails:', JSON.stringify(recentEmails, null, 2));
@@ -41,7 +41,6 @@ export async function GET(request: Request) {
         from: email.headers?.find((h: { name: string }) => h.name === 'From')?.value,
         date: email.headers?.find((h: { name: string }) => h.name === 'Date')?.value,
         text: email.text,
-        html: email.html
       }))
     });
 

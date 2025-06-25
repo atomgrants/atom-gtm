@@ -6,10 +6,13 @@ export async function testConnection(gmail: any): Promise<number> {
   return response.data.resultSizeEstimate || 0;
 }
 
-export async function getEmails(gmail: any) {
+/*TODO:
+add parameter for maxResults that can get value from getNewEmails
+*/
+export async function getEmails(gmail: any, count:number) {
   const response = await gmail.users.messages.list({
     userId: "me",
-    maxResults: 1,
+    maxResults: count,
     q: "category:primary",
   });
 
@@ -30,7 +33,6 @@ export async function getEmails(gmail: any) {
       snippet: msgDetail.data.snippet,
       payload: msgDetail.data.payload,
       text: text, //text version of the email body
-      html: html, //html version of the email body
       headers: msgDetail.data.payload?.headers, //contain subject, from, date
       internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
     }

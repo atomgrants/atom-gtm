@@ -40,6 +40,41 @@ export async function getEmails(gmail: any, count:number) {
   return msg;
 }
 
+export async function getEmailsTest(gmail: any, count:number, sinceDate:Date) {
+  //get timestamp in unix format
+  const unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
+
+  //get emails since date
+  const response = await gmail.users.messages.list({
+    userId: "me",
+    maxResults: count,
+    q: `after:${unixTimestamp} category:primary`,
+  });
+
+  // Check if there are any messages
+  if (!response.data.messages || response.data.messages.length === 0) {
+    return [];
+  }
+
+  const msg = await Promise.all(response.data.messages.map(async (msg: { id: string }) => {
+    const msgDetail = await gmail.users.messages.get({
+      userId: "me",
+      id: msg.id,
+      format: "full",
+    });
+    const { text, html } = extractEmailBody(msgDetail.data.payload);
+    return {
+      id: msg.id,
+      snippet: msgDetail.data.snippet,
+      payload: msgDetail.data.payload,
+      text: text, //text version of the email body
+      headers: msgDetail.data.payload?.headers, //contain subject, from, date
+      internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
+    }
+  }));
+  return msg;
+}
+
 function extractEmailBody(payload: any): { text: string; html: string } {
   let textBody = "";
   let htmlBody = "";

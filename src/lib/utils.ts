@@ -127,25 +127,3 @@ async function getEmailsSinceDate(gmail: any, sinceDate: Date) {
   );
 }
 
-function extractReplyContent(body: string): string {
-  // Common separators for replies/forwards
-  const separators = [
-    /^On .+ wrote:$/m, // Gmail, Apple Mail, etc.
-    /^From: .+$/m,     // Outlook, etc.
-    /^-----Original Message-----$/m,
-    /^---------- Forwarded message ----------$/m,
-    /^Begin forwarded message:$/m,
-  ];
-
-  let minIndex = body.length;
-  for (const sep of separators) {
-    const match = body.match(sep);
-    if (match && match.index !== undefined && match.index < minIndex) {
-      minIndex = match.index;
-    }
-  }
-  // Return everything before the first separator, trimmed
-  return body.slice(0, minIndex).trim();
-}
-
-

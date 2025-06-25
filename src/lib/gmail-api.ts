@@ -49,11 +49,14 @@ export async function getEmailsTest(gmail: any, count: number, sinceDate: Date |
     unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
   }
 
+const senders = ["resadm-l@lists.healthresearch.org", "esdrasntuyenabo40@gmail.com"];
+const query = `after:${unixTimestamp} category:primary (from:${senders[0]} OR from:${senders[1]})`;
+
   //get emails since date
   const response = await gmail.users.messages.list({
     userId: "me",
     maxResults: count,
-    q: `after:${unixTimestamp} category:primary`,
+    q: query,
     pageToken: pageToken,
     format: "full",
   });
@@ -74,7 +77,7 @@ export async function getEmailsTest(gmail: any, count: number, sinceDate: Date |
       id: msg.id,
       snippet: msgDetail.data.snippet,
       payload: msgDetail.data.payload,
-      text: text, //text version of the email body
+      text: extractReplyContent(text).replace(/[\r\n]+/g, ' '), //text version of the email body
       headers: msgDetail.data.payload?.headers, //contain subject, from, date
       internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
     }
@@ -83,6 +86,7 @@ export async function getEmailsTest(gmail: any, count: number, sinceDate: Date |
   return { emailsList: msg, length: response.data.messages.length, nextPageToken: response.data.nextPageToken };
 }
 
+/*
 function extractEmailBody(payload: any): { text: string; html: string } {
   let textBody = "";
   let htmlBody = "";
@@ -110,6 +114,7 @@ function extractEmailBody(payload: any): { text: string; html: string } {
 
   return { text: textBody, html: htmlBody };
 }
+*/
 
 export function extractName(fromHeader: string): string {
   if (!fromHeader) return '';
@@ -135,7 +140,26 @@ export function extractEmail(fromHeader: string): string {
   // Fallback: assume the whole string is an email
   return fromHeader.trim();
 }
-/*
+
+function extractReplyContent(body: string): string {
+  // Common separators for replies/forwards
+  const separators = [
+    /^On .+ wrote:$/m, // Gmail, Apple Mail, etc.
+    /^From: .+$/m,     // Outlook, etc.
+    /^-----Original Message-----$/m,
+  ];
+
+  let minIndex = body.length;
+  for (const sep of separators) {
+    const match = body.match(sep);
+    if (match && match.index !== undefined && match.index < minIndex) {
+      minIndex = match.index;
+    }
+  }
+  // Return everything before the first separator, trimmed
+  return body.slice(0, minIndex).trim();
+}
+
 function extractEmailBody(payload: any): { text: string; html: string } {
   function findText(part: any): string | null {
     if (part.mimeType === 'text/plain' && part.body && part.body.data) {
@@ -167,4 +191,3 @@ function extractEmailBody(payload: any): { text: string; html: string } {
   const htmlBody = findHtml(payload) || '';
   return { text: textBody, html: htmlBody };
 }
-*/

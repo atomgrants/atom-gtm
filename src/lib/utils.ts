@@ -68,11 +68,13 @@ export async function getNewEmails(gmail: any) {
   const allNewEmails: any[] = [];
   let length = 0;
   let nextPageToken: string | undefined = undefined;
+  let attemptFetch = 0;
 
   do {
     const result = await getEmailsTest(gmail, 50, sinceDate, pageToken);
     const { emailsList } = result;
     length = result.length;
+    attemptFetch++;
     nextPageToken = result.nextPageToken;
     for (const email of emailsList) {
       await insertEmail(email);
@@ -81,9 +83,11 @@ export async function getNewEmails(gmail: any) {
     pageToken = nextPageToken;
   } while (length === 50 && nextPageToken);
 
-  return allNewEmails;
+  //return true if all emails were fetched, false otherwise
+  return attemptFetch === allNewEmails.length;
 }
 
+/*to be removed*/
 async function getEmailsSinceDate(gmail: any, sinceDate: Date) {
   const unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
   

@@ -52,36 +52,6 @@ const query = `after:${unixTimestamp} category:primary (from:${senders[0]} OR fr
   return { emailsList: msg, length: response.data.messages.length, nextPageToken: response.data.nextPageToken };
 }
 
-/*
-function extractEmailBody(payload: any): { text: string; html: string } {
-  let textBody = "";
-  let htmlBody = "";
-
-  // Simple email (body directly in payload)
-  if (payload.body && payload.body.data) {
-    const decoded = Buffer.from(payload.body.data, 'base64').toString('utf-8');
-    if (payload.mimeType === 'text/plain') {
-      textBody = decoded;
-    } else if (payload.mimeType === 'text/html') {
-      htmlBody = decoded;
-    }
-  }
-
-  // Multi-part email (text + html versions)
-  if (payload.parts) {
-    payload.parts.forEach((part: any) => {
-      if (part.mimeType === 'text/plain' && part.body.data) {
-        textBody = Buffer.from(part.body.data, 'base64').toString('utf-8');
-      } else if (part.mimeType === 'text/html' && part.body.data) {
-        htmlBody = Buffer.from(part.body.data, 'base64').toString('utf-8');
-      }
-    });
-  }
-
-  return { text: textBody, html: htmlBody };
-}
-*/
-
 export function extractName(fromHeader: string): string {
   if (!fromHeader) return '';
   

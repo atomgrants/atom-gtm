@@ -6,42 +6,6 @@ export async function testConnection(gmail: any): Promise<number> {
   return response.data.resultSizeEstimate || 0;
 }
 
-/*TODO:
-add parameter for maxResults that can get value from getNewEmails
-*/
-/*
-export async function getEmails(gmail: any, count:number) {
-  const response = await gmail.users.messages.list({
-    userId: "me",
-    maxResults: count,
-    q: "category:primary",
-  });
-
-  // Check if there are any messages
-  if (!response.data.messages || response.data.messages.length === 0) {
-    return [];
-  }
-
-  const msg = await Promise.all(response.data.messages.map(async (msg: { id: string }) => {
-    const msgDetail = await gmail.users.messages.get({
-      userId: "me",
-      id: msg.id,
-      format: "full",
-    });
-    const { text, html } = extractEmailBody(msgDetail.data.payload);
-    return {
-      id: msg.id,
-      snippet: msgDetail.data.snippet,
-      payload: msgDetail.data.payload,
-      text: text, //text version of the email body
-      headers: msgDetail.data.payload?.headers, //contain subject, from, date
-      internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
-    }
-  }));
-  return msg;
-}
-*/
-
 export async function getEmails(gmail: any, count: number, sinceDate: Date | null, pageToken?: string) {
   //get timestamp in unix format
   let unixTimestamp: number;

@@ -26,8 +26,8 @@ export async function GET(request: Request) {
     }
     //original logic
     const email = await testConnection(gmail);
-    //const recentEmails = await getLatestEmails(gmail, 1);
-    const recentEmails = await getEmails(gmail, 2);
+    const unixTimestamp = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
+    const recentEmails = await getEmails(gmail, 2, new Date(unixTimestamp * 1000), undefined);
 
 
     console.log('Recent emails:', JSON.stringify(recentEmails, null, 2));
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       userEmail: email,
-      recentEmails: recentEmails.map((email: any) => ({
+      recentEmails: recentEmails.emailsList.map((email: any) => ({
         id: email.id, snippet: email.snippet,
         subject: email.headers?.find((h: { name: string }) => h.name === 'Subject')?.value,
         from: email.headers?.find((h: { name: string }) => h.name === 'From')?.value,

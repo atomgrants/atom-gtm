@@ -9,6 +9,7 @@ export async function testConnection(gmail: any): Promise<number> {
 /*TODO:
 add parameter for maxResults that can get value from getNewEmails
 */
+/*
 export async function getEmails(gmail: any, count:number) {
   const response = await gmail.users.messages.list({
     userId: "me",
@@ -39,8 +40,9 @@ export async function getEmails(gmail: any, count:number) {
   }));
   return msg;
 }
+*/
 
-export async function getEmailsTest(gmail: any, count: number, sinceDate: Date | null, pageToken?: string) {
+export async function getEmails(gmail: any, count: number, sinceDate: Date | null, pageToken?: string) {
   //get timestamp in unix format
   let unixTimestamp: number;
   if (sinceDate === null) {

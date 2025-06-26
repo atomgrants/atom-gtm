@@ -1,7 +1,7 @@
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { extractEmail, extractName, getEmailsTest } from '@/lib/gmail-api';
+import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
@@ -85,7 +85,7 @@ export async function getNewEmails(gmail: any) {
   let attemptFetch = 0;
 
   do {
-    const result = await getEmailsTest(gmail, 50, sinceDate, pageToken);
+    const result = await getEmails(gmail, 50, sinceDate, pageToken);
     const { emailsList } = result;
     length = result.length;
     attemptFetch += length;

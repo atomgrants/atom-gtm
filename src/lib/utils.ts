@@ -27,6 +27,7 @@ export const convertEmailToDbFormat = (email: any) => {
     subject: subject,
     date_time_sent: email.internalDate,
     listserv_name: 'ResAdmin',
+    gmail_message_id: email.id,
   }
 }
 
@@ -84,12 +85,14 @@ export async function getNewEmails(gmail: any) {
   // Get the most recent email from database
   const lastSavedEmail = await getLastSavedEmail();
   let sinceDate = null;
+  let lastSavedId = null;
   if (!lastSavedEmail) {
     // No emails in DB yet - get recent emails (last 24 hours)
     console.log('No emails in database, fetching last 24 hours');
     sinceDate = null;
   } else {
     sinceDate = new Date(lastSavedEmail.date_time_sent);
+    lastSavedId = lastSavedEmail.gmail_message_id;
     console.log('Last saved email time:', sinceDate.toISOString());
   }
 
@@ -101,10 +104,21 @@ export async function getNewEmails(gmail: any) {
 
   do {
     const result = await getEmails(gmail, 50, sinceDate, pageToken);
-    const { emailsList } = result;
+    let { emailsList } = result;
     length = result.length;
     attemptFetch += length;
     nextPageToken = result.nextPageToken;
+    // Filter out emails with the same id as the last saved one
+    if (lastSavedId) {
+      emailsList = emailsList.filter((email: any) => email.id !== lastSavedId);
+
+      //if the length of emailsList is less than the length of the result, it means that the last email was already fetched
+      //so we need to subtract 1 from the attemptFetch
+      if(emailsList.length !== length){
+        attemptFetch -= 1;
+      }
+    }
+
     for (const email of emailsList) {
       const emailData = convertEmailToDbFormat(email);
       await insertEmail(emailData);
@@ -116,32 +130,6 @@ export async function getNewEmails(gmail: any) {
   //return true if all emails were fetched, false otherwise
   return {attemptFetch, allNewEmails};
 }
-
-/*to be removed*/
-async function getEmailsSinceDate(gmail: any, sinceDate: Date) {
-  const unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
-  
-  const response = await gmail.users.messages.list({
-    userId: 'me',
-    q: `after:${unixTimestamp}`,
-    maxResults: 50
-  });
-  
-  const messageIds = response.data.messages || [];
-  
-  return Promise.all(
-    messageIds.map(async (msg: { id: string }) => {
-      const email = await gmail.users.messages.get({
-        userId: 'me',
-        id: msg.id,
-        format: 'metadata',
-        metadataHeaders: ['subject', 'from', 'date']
-      });
-      return email.data;
-    })
-  );
-}
-
 
 export const discordNotification = async ({
   email,

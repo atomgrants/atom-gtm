@@ -1,0 +1,1 @@
+ALTER TABLE emails ADD COLUMN gmail_message_id TEXT;

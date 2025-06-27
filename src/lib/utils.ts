@@ -50,7 +50,7 @@ export const insertEmail = async (email: EmailInsert) => {
       email: data[0].sender_email_address,
       name: data[0].sender_name,
       subject: data[0].subject,
-      message: data[0].body,
+      message: formatLinks(data[0].body),
     });
     console.log('Discord notification sent');
   }
@@ -178,3 +178,16 @@ export const discordNotification = async ({
       return false;
     });
 };
+
+function formatLinks(text: string): string {
+  // Improved regex: matches full URLs with query params, etc.
+  const urlRegex = /<?((https?:\/\/|www\.)[^\s<>()\[\]]+)>?/g;
+  return text.replace(urlRegex, (fullMatch, captureGroup1) => {
+    // Remove leading < and trailing > and punctuation
+    //let cleanUrl = url.replace(/^<+/, '').replace(/>+$/, '');
+    // Optionally, remove trailing punctuation that is not part of the URL
+    let cleanUrl = captureGroup1.replace(/[.,!?;:'")\]]+$/, '');
+    const normalizedUrl = cleanUrl.startsWith('www.') ? `https://${cleanUrl}` : cleanUrl;
+    return `[${cleanUrl}](<${normalizedUrl}>)`;
+  });
+}

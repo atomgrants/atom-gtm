@@ -47,12 +47,12 @@ export const insertEmail = async (email: EmailInsert) => {
   console.log('Email inserted:', data);
 
   //discord notification
-  if(isProduction){
+  if (isProduction) {
     //only send discord notification if the email contains keywords 
-    if(contentKeywordFilter(data[0].body, data[0].subject)){
-    await discordNotification({
-      email: data[0].sender_email_address,
-      name: data[0].sender_name,
+    if (contentKeywordFilter(data[0].body, data[0].subject)) {
+      await discordNotification({
+        email: data[0].sender_email_address,
+        name: data[0].sender_name,
         subject: data[0].subject,
         message: formatLinks(data[0].body),
       });
@@ -75,12 +75,12 @@ export async function getLastSavedEmail() {
     .order('date_time_sent', { ascending: false })
     .limit(1)
     .single();
-    
+
   if (error) {
     console.log('No emails in database yet');
     return null;
   }
-  
+
   return data;
 }
 
@@ -118,7 +118,7 @@ export async function getNewEmails(gmail: any) {
 
       //if the length of emailsList is less than the length of the result, it means that the last email was already fetched
       //so we need to subtract 1 from the attemptFetch
-      if(emailsList.length !== length){
+      if (emailsList.length !== length) {
         attemptFetch -= 1;
       }
     }
@@ -132,7 +132,7 @@ export async function getNewEmails(gmail: any) {
   } while (length === 50 && nextPageToken);
 
   //return true if all emails were fetched, false otherwise
-  return {attemptFetch, allNewEmails};
+  return { attemptFetch, allNewEmails };
 }
 
 export const discordNotification = async ({
@@ -153,7 +153,7 @@ export const discordNotification = async ({
 
     {
       body: JSON.stringify({
-        content: `## ❗️ New Support Request ❗️ \nName: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}`,
+        content: `## ❗️ New Mention ❗️ \nName: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}`,
       }),
       headers: {
         "Content-Type": "application/json",

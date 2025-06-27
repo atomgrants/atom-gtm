@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
 import { NextResponse } from 'next/server';
+import fs from 'fs';
 
 //const isProduction = process.env.NODE_ENV === 'production';
 const isProduction = false;
@@ -47,13 +48,16 @@ export const insertEmail = async (email: EmailInsert) => {
 
   //discord notification
   if(isProduction){
+    //only send discord notification if the email contains keywords 
+    if(contentKeywordFilter(data[0].body, data[0].subject)){
     await discordNotification({
       email: data[0].sender_email_address,
       name: data[0].sender_name,
-      subject: data[0].subject,
-      message: formatLinks(data[0].body),
-    });
-    console.log('Discord notification sent');
+        subject: data[0].subject,
+        message: formatLinks(data[0].body),
+      });
+      console.log('Discord notification sent');
+    }
   }
 
   return NextResponse.json({
@@ -178,4 +182,11 @@ function formatLinks(text: string): string {
     const normalizedUrl = cleanUrl.startsWith('www.') ? `https://${cleanUrl}` : cleanUrl;
     return `[${cleanUrl}](<${normalizedUrl}>)`;
   });
+}
+
+// function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
+function contentKeywordFilter(body: string, subject: string): boolean {
+  const keywords = fs.readFileSync('src/data/keywords.csv', 'utf8');
+  const keywordsArray = keywords.split('\n').map(line => line.split(',')[1].trim());
+  return keywordsArray.some(keyword => body.toLowerCase().includes(keyword.toLowerCase()) || subject.toLowerCase().includes(keyword.toLowerCase()));
 }

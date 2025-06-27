@@ -1,11 +1,15 @@
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { extractEmail, extractName, getEmailsTest } from '@/lib/gmail-api';
+import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+
+//const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = false;
 
 /** Merge classes with tailwind-merge with clsx full feature */
 export function cn(...inputs: ClassValue[]) {
@@ -24,6 +28,7 @@ export const convertEmailToDbFormat = (email: any) => {
     subject: subject,
     date_time_sent: email.internalDate,
     listserv_name: 'ResAdmin',
+    gmail_message_id: email.id,
   }
 }
 
@@ -40,6 +45,21 @@ export const insertEmail = async (email: EmailInsert) => {
   }
 
   console.log('Email inserted:', data);
+
+  //discord notification
+  if (isProduction) {
+    //only send discord notification if the email contains keywords 
+    if (contentKeywordFilter(data[0].body, data[0].subject)) {
+      await discordNotification({
+        email: data[0].sender_email_address,
+        name: data[0].sender_name,
+        subject: data[0].subject,
+        message: formatLinks(data[0].body),
+      });
+      console.log('Discord notification sent');
+    }
+  }
+
   return NextResponse.json({
     success: true,
     message: 'Email inserted',
@@ -55,12 +75,12 @@ export async function getLastSavedEmail() {
     .order('date_time_sent', { ascending: false })
     .limit(1)
     .single();
-    
+
   if (error) {
     console.log('No emails in database yet');
     return null;
   }
-  
+
   return data;
 }
 
@@ -69,12 +89,14 @@ export async function getNewEmails(gmail: any) {
   // Get the most recent email from database
   const lastSavedEmail = await getLastSavedEmail();
   let sinceDate = null;
+  let lastSavedId = null;
   if (!lastSavedEmail) {
     // No emails in DB yet - get recent emails (last 24 hours)
     console.log('No emails in database, fetching last 24 hours');
     sinceDate = null;
   } else {
     sinceDate = new Date(lastSavedEmail.date_time_sent);
+    lastSavedId = lastSavedEmail.gmail_message_id;
     console.log('Last saved email time:', sinceDate.toISOString());
   }
 
@@ -85,11 +107,22 @@ export async function getNewEmails(gmail: any) {
   let attemptFetch = 0;
 
   do {
-    const result = await getEmailsTest(gmail, 50, sinceDate, pageToken);
-    const { emailsList } = result;
+    const result = await getEmails(gmail, 50, sinceDate, pageToken);
+    let { emailsList } = result;
     length = result.length;
     attemptFetch += length;
     nextPageToken = result.nextPageToken;
+    // Filter out emails with the same id as the last saved one
+    if (lastSavedId) {
+      emailsList = emailsList.filter((email: any) => email.id !== lastSavedId);
+
+      //if the length of emailsList is less than the length of the result, it means that the last email was already fetched
+      //so we need to subtract 1 from the attemptFetch
+      if (emailsList.length !== length) {
+        attemptFetch -= 1;
+      }
+    }
+
     for (const email of emailsList) {
       const emailData = convertEmailToDbFormat(email);
       await insertEmail(emailData);
@@ -99,31 +132,61 @@ export async function getNewEmails(gmail: any) {
   } while (length === 50 && nextPageToken);
 
   //return true if all emails were fetched, false otherwise
-  return {attemptFetch, allNewEmails};
+  return { attemptFetch, allNewEmails };
 }
 
-/*to be removed*/
-async function getEmailsSinceDate(gmail: any, sinceDate: Date) {
-  const unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
-  
-  const response = await gmail.users.messages.list({
-    userId: 'me',
-    q: `after:${unixTimestamp}`,
-    maxResults: 50
-  });
-  
-  const messageIds = response.data.messages || [];
-  
-  return Promise.all(
-    messageIds.map(async (msg: { id: string }) => {
-      const email = await gmail.users.messages.get({
-        userId: 'me',
-        id: msg.id,
-        format: 'metadata',
-        metadataHeaders: ['subject', 'from', 'date']
-      });
-      return email.data;
+export const discordNotification = async ({
+  email,
+  name,
+  subject,
+  message,
+}: {
+  email: string;
+  name: string;
+  subject: string;
+  message: string;
+}) => {
+  if (!isProduction) return;
+
+  return await fetch(
+    `https://discord.com/api/webhooks/1387797986817609728/GPyC21ZUU5ZQd-_R4HnqXZoMRCzVBjrxDRzziRIuUhZFooxUh9CxM1qoITCn2dQPxLjE`,
+
+    {
+      body: JSON.stringify({
+        content: `## ❗️ New Mention ❗️ \nName: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}`,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    }
+  )
+    .then(() => {
+      console.log('Discord notification fetch succeeded');
+      return true;
     })
-  );
+    .catch((error) => {
+      console.error('Error sending discord notification', error);
+      return false;
+    });
+};
+
+function formatLinks(text: string): string {
+  // Improved regex: matches full URLs with query params, etc.
+  const urlRegex = /<?((https?:\/\/|www\.)[^\s<>()\[\]]+)>?/g;
+  return text.replace(urlRegex, (fullMatch, captureGroup1) => {
+    // Remove leading < and trailing > and punctuation
+    //let cleanUrl = url.replace(/^<+/, '').replace(/>+$/, '');
+    // Optionally, remove trailing punctuation that is not part of the URL
+    let cleanUrl = captureGroup1.replace(/[.,!?;:'")\]]+$/, '');
+    const normalizedUrl = cleanUrl.startsWith('www.') ? `https://${cleanUrl}` : cleanUrl;
+    return `[${cleanUrl}](<${normalizedUrl}>)`;
+  });
 }
 
+// function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
+function contentKeywordFilter(body: string, subject: string): boolean {
+  const keywords = fs.readFileSync('src/data/keywords.csv', 'utf8');
+  const keywordsArray = keywords.split('\n').map(line => line.split(',')[1].trim());
+  return keywordsArray.some(keyword => body.toLowerCase().includes(keyword.toLowerCase()) || subject.toLowerCase().includes(keyword.toLowerCase()));
+}

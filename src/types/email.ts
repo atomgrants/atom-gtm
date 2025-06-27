@@ -5,4 +5,5 @@ export interface EmailInsert {
   sender_email_address: string;
   date_time_sent: string;
   listserv_name: string;
+  gmail_message_id: string;
 }

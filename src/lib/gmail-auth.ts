@@ -9,7 +9,7 @@ const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 let authClient: JWT;
 
 function loadServiceAccountCredentials(){
-  const json = fs.readFileSync(SERVICE_ACCOUNT_FILE, 'utf8');
+  const json = fs.readFileSync('service-account.json', 'utf8');
   return JSON.parse(json);
 }
 export function createServiceAccountClient(){

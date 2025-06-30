@@ -1,18 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { getTokensFromCode } from "@/lib/gmail-auth";
+// import { getTokensFromCode } from "@/lib/gmail-auth";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const code = url.searchParams.get("code");
+  const code = url.searchParams.get('code');
   if (!code) {
-    return NextResponse.json({ error: "No code provided" }, { status: 400 });
+    return NextResponse.json({ error: 'No code provided' }, { status: 400 });
   }
-  await getTokensFromCode(code);
+  // await getTokensFromCode(code);
 
   //success page
   return new Response(
-`
+    `
 <html>
   <body>
     <p>Successfully connected gmail account</p>
@@ -31,9 +31,11 @@ export async function GET(request: Request) {
     </script>
   </body>
 </html>
-`, {
-    headers: {
-      "Content-Type": "text/html",
-    },
-  });
+`,
+    {
+      headers: {
+        'Content-Type': 'text/html',
+      },
+    }
+  );
 }

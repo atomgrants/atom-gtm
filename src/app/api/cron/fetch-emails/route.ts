@@ -1,11 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { createServiceAccountClient } from "@/lib/gmail-auth";
-import { getNewEmails } from "@/lib/utils";
-
+import { getNewEmails } from '@/lib/emailUtils';
+import { createServiceAccountClient } from '@/lib/gmail-auth';
 
 export async function GET(request: Request) {
-
   /*
   //verify request is from vercel cron
   const cronSecret = process.env.CRON_SECRET;
@@ -21,48 +19,56 @@ export async function GET(request: Request) {
 
   /*Cron logic*/
   console.log('Starting fetch-emails API call');
-  
-  // check client connection  
-  try{
+
+  // check client connection
+  try {
     //const canConnect = await createServiceAccountClient();
     const canConnect = true;
-    
-    if(!canConnect){
+
+    if (!canConnect) {
       console.log('Gmail client connection failed');
-      return NextResponse.json({
-        success: false,
-        message: 'Gmail client connection failed',
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Gmail client connection failed',
+        },
+        { status: 500 }
+      );
     }
 
-      //fetch emails from gmail
-      // const gmail = createGmailClient();
-      // service account client 
-      const gmail = createServiceAccountClient();
+    //fetch emails from gmail
+    // const gmail = createGmailClient();
+    // service account client
+    const gmail = createServiceAccountClient();
 
-      const {attemptFetch, allNewEmails} = await getNewEmails(gmail);
-      console.log('Attempt fetch:', attemptFetch);
-      console.log('All new emails:', allNewEmails.length);
+    const { attemptFetch, allNewEmails } = await getNewEmails(gmail);
+    console.log('Attempt fetch:', attemptFetch);
+    console.log('All new emails:', allNewEmails.length);
 
-      if(attemptFetch === allNewEmails.length){
+    if (attemptFetch === allNewEmails.length) {
       return NextResponse.json({
         success: true,
         message: 'Emails fetched and inserted successfully',
         attemptFetch: attemptFetch,
         emailsInserted: allNewEmails.length,
       });
-      }
-      else{
-        return NextResponse.json({
+    } else {
+      return NextResponse.json(
+        {
           success: false,
           message: 'Error fetching emails',
-        }, { status: 500 });
-      }
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     console.error('Error fetching emails:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Error fetching emails',
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Error fetching emails',
+      },
+      { status: 500 }
+    );
   }
 }

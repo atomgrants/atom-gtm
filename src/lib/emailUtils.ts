@@ -1,10 +1,11 @@
 'use server';
 
-import fs from 'fs';
 import { NextResponse } from 'next/server';
 
 import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
+
+import { keywords } from '@/data/keywords';
 
 import { EmailInsert } from '@/types/email';
 
@@ -196,19 +197,19 @@ function formatLinks(text: string): string {
 
 // function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
 function contentKeywordFilter(body: string, subject: string): boolean {
-  const keywords = fs.readFileSync('src/data/keywords.csv', 'utf8');
-  const keywordsArray = keywords
-    .split('\n')
-    .map((line) => {
-      const parts = line.split(',');
-      return parts[1] ? parts[1].trim() : null;
-    })
-    .filter(Boolean);
+  // const keywords = fs.readFileSync('src/data/keywords.csv', 'utf8');
+  // const keywordsArray = keywords
+  //   .split('\n')
+  //   .map((line) => {
+  //     const parts = line.split(',');
+  //     return parts[1] ? parts[1].trim() : null;
+  //   })
+  //   .filter(Boolean);
 
   // Remove mailing list footer before searching for keywords
   const cleanedBody = removeMailingListFooter(body);
 
-  return keywordsArray.some(
+  return keywords.some(
     (keyword) =>
       keyword &&
       (cleanedBody.toLowerCase().includes(keyword.toLowerCase()) ||

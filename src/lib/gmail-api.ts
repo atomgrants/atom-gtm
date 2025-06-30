@@ -1,3 +1,5 @@
+
+
 export async function testConnection(gmail: any): Promise<number> {
   const response = await gmail.users.messages.list({
     userId: "me",
@@ -16,7 +18,7 @@ export async function getEmails(gmail: any, count: number, sinceDate: Date | nul
   }
 
 const senders = ["resadm-l@lists.healthresearch.org", "esdrasntuyenabo40@gmail.com"];
-const query = `after:${unixTimestamp} category:primary (from:${senders[0]} OR from:${senders[1]})`;
+const query = `after:${unixTimestamp} (from:${senders[0]} OR from:${senders[1]})`;
 
   //get emails since date
   const response = await gmail.users.messages.list({
@@ -104,7 +106,7 @@ function extractEmailBody(payload: any): { text: string; html: string } {
     if (part.parts) {
       for (const subPart of part.parts) {
         const text = findText(subPart);
-        if (text) return text;
+        if (text) return removeMailingListFooter(text);
       }
     }
     return null;
@@ -126,4 +128,13 @@ function extractEmailBody(payload: any): { text: string; html: string } {
   const textBody = findText(payload) || '';
   const htmlBody = findHtml(payload) || '';
   return { text: textBody, html: htmlBody };
+}
+
+function removeMailingListFooter(body: string): string {
+  const marker = "This email was sent to team@atomgrants.com via the Research Administrator's mailing list.";
+  const index = body.indexOf(marker);
+  if (index !== -1) {
+    return body.substring(0, index).trim();
+  }
+  return body;
 }

@@ -1,6 +1,29 @@
 import fs from "fs";
+import {JWT} from "google-auth-library"
 import { google } from "googleapis";
 
+const SERVICE_ACCOUNT_FILE = "service-account.json" //path here
+const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
+
+let authClient: JWT;
+
+function loadServiceAccountCredentials(){
+  const json = fs.readFileSync(SERVICE_ACCOUNT_FILE, 'utf8');
+  return JSON.parse(json);
+}
+export function createServiceAccountClient(){
+  const credentials = loadServiceAccountCredentials();
+  authClient = new JWT({
+    email: credentials.client_email,
+    key: credentials.private_key,
+    scopes: SCOPES,
+    subject: "team@atomgrants.com"
+  });
+  return google.gmail({ version: "v1", auth: authClient });
+}
+
+
+/*oauth2 client
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -56,9 +79,9 @@ export function createGmailClient() {
   }
   oauth2Client.setCredentials(tokens);
   return google.gmail({ version: "v1", auth: oauth2Client });
-}
+}*/
 
-/*api health check*/
+/*api health check
 export function hasValidTokens(): boolean {
   try {
     const tokens = loadTokensFromFile();
@@ -96,3 +119,4 @@ export async function canCreateGmailClient(): Promise<boolean> {
 
   return true;
 }
+*/

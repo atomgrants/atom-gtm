@@ -1,15 +1,16 @@
 import clsx, { ClassValue } from 'clsx';
+import fs from 'fs';
+import { NextResponse } from 'next/server';
 import { twMerge } from 'tailwind-merge';
 
 import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
-import { NextResponse } from 'next/server';
-import fs from 'fs';
 
 //const isProduction = process.env.NODE_ENV === 'production';
-const isProduction = false;
+// set it to true to send discord notification
+const isProduction = true;
 
 /** Merge classes with tailwind-merge with clsx full feature */
 export function cn(...inputs: ClassValue[]) {
@@ -173,12 +174,12 @@ export const discordNotification = async ({
 
 function formatLinks(text: string): string {
   // Improved regex: matches full URLs with query params, etc.
-  const urlRegex = /<?((https?:\/\/|www\.)[^\s<>()\[\]]+)>?/g;
+  const urlRegex = /<?((https?:\/\/|www\.)[^\s<>()[\]]+)>?/g;
   return text.replace(urlRegex, (fullMatch, captureGroup1) => {
     // Remove leading < and trailing > and punctuation
     //let cleanUrl = url.replace(/^<+/, '').replace(/>+$/, '');
     // Optionally, remove trailing punctuation that is not part of the URL
-    let cleanUrl = captureGroup1.replace(/[.,!?;:'")\]]+$/, '');
+    const cleanUrl = captureGroup1.replace(/[.,!?;:'")\]]+$/, '');
     const normalizedUrl = cleanUrl.startsWith('www.') ? `https://${cleanUrl}` : cleanUrl;
     return `[${cleanUrl}](<${normalizedUrl}>)`;
   });
@@ -187,6 +188,27 @@ function formatLinks(text: string): string {
 // function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
 function contentKeywordFilter(body: string, subject: string): boolean {
   const keywords = fs.readFileSync('src/data/keywords.csv', 'utf8');
-  const keywordsArray = keywords.split('\n').map(line => line.split(',')[1].trim());
-  return keywordsArray.some(keyword => body.toLowerCase().includes(keyword.toLowerCase()) || subject.toLowerCase().includes(keyword.toLowerCase()));
+  const keywordsArray = keywords
+    .split('\n')
+    .map(line => {
+      const parts = line.split(',');
+      return parts[1] ? parts[1].trim() : null;
+    })
+    .filter(Boolean);
+
+  // Remove mailing list footer before searching for keywords
+  const cleanedBody = removeMailingListFooter(body);
+
+  return keywordsArray.some(keyword =>
+    keyword && (cleanedBody.toLowerCase().includes(keyword.toLowerCase()) || subject.toLowerCase().includes(keyword.toLowerCase()))
+  );
+}
+
+function removeMailingListFooter(body: string): string {
+  const marker = "This email was sent to team@atomgrants.com via the Research Administrator's mailing list.";
+  const index = body.indexOf(marker);
+  if (index !== -1) {
+    return body.substring(0, index).trim();
+  }
+  return body;
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { canCreateGmailClient, createGmailClient } from "@/lib/gmail-auth";
 import { getNewEmails } from "@/lib/utils";
 
@@ -25,6 +26,7 @@ export async function GET(request: Request) {
   try{
     const canConnect = await canCreateGmailClient();
     
+    
     if(!canConnect){
       console.log('Gmail client connection failed');
       return NextResponse.json({
@@ -35,6 +37,8 @@ export async function GET(request: Request) {
 
       //fetch emails from gmail
       const gmail = createGmailClient();
+      // service account client 
+      // const gmail = createServiceAccountClient();
 
       const {attemptFetch, allNewEmails} = await getNewEmails(gmail);
       console.log('Attempt fetch:', attemptFetch);

@@ -1,6 +1,27 @@
 import fs from "fs";
 import { google } from "googleapis";
 
+/*
+const SERVICE_ACCOUNT_FILE = "" //path here
+const DELEGATED_USER = "team@atom.com"
+const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
+
+let authClient: JWT;
+
+function loadServiceAccountCredentials(){
+  const json = fs.readFileSync(SERVICE_ACCOUNT_FILE, 'utf8');
+  return JSON.parse(json);
+}
+export function createServiceAccountClient(){
+  const credentials = loadServiceAccountCredentials();
+  authClient = new JWT({
+    email: credentials.client_email,
+    key: credentials.private_key,
+    scopes: SCOPES,
+  });
+  return google.gmail({ version: "v1", auth: authClient });
+}
+*/
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,

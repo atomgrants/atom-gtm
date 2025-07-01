@@ -9,18 +9,14 @@ import { keywords } from '@/data/keywords';
 
 import { EmailInsert } from '@/types/email';
 
-//const isProduction = process.env.NODE_ENV === 'production';
+
 // set it to true to send discord notification
 const isProduction = true;
 /**email utils***/
 /*convert email to db format*/
 export const convertEmailToDbFormat = (email: any) => {
-  const fromHeader =
-    email.headers?.find((h: { name: string }) => h.name === 'From')?.value ||
-    '';
-  const subject =
-    email.headers?.find((h: { name: string }) => h.name === 'Subject')?.value ||
-    '';
+  const fromHeader = email.headers?.find((h: { name: string }) => h.name === 'From')?.value ||'';
+  const subject = email.headers?.find((h: { name: string }) => h.name === 'Subject')?.value || '';
   return {
     sender_name: extractName(fromHeader),
     sender_email_address: extractEmail(fromHeader),
@@ -133,7 +129,7 @@ export async function getNewEmails(gmail: any) {
     }
 
     for (const email of emailsList) {
-      const emailData = convertEmailToDbFormat(email);
+      const emailData = await convertEmailToDbFormat(email);
       await insertEmail(emailData);
     }
     allNewEmails.push(...emailsList);
@@ -197,32 +193,7 @@ function formatLinks(text: string): string {
 
 // function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
 function contentKeywordFilter(body: string, subject: string): boolean {
-  // const keywords = fs.readFileSync('src/data/keywords.csv', 'utf8');
-  // const keywordsArray = keywords
-  //   .split('\n')
-  //   .map((line) => {
-  //     const parts = line.split(',');
-  //     return parts[1] ? parts[1].trim() : null;
-  //   })
-  //   .filter(Boolean);
-
-  // Remove mailing list footer before searching for keywords
-  const cleanedBody = removeMailingListFooter(body);
-
-  return keywords.some(
-    (keyword) =>
-      keyword &&
-      (cleanedBody.toLowerCase().includes(keyword.toLowerCase()) ||
+  return keywords.some((keyword) => keyword && (body.toLowerCase().includes(keyword.toLowerCase()) ||
         subject.toLowerCase().includes(keyword.toLowerCase()))
   );
-}
-
-function removeMailingListFooter(body: string): string {
-  const marker =
-    "This email was sent to team@atomgrants.com via the Research Administrator's mailing list.";
-  const index = body.indexOf(marker);
-  if (index !== -1) {
-    return body.substring(0, index).trim();
-  }
-  return body;
 }

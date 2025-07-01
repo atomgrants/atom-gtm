@@ -106,7 +106,10 @@ function extractEmailBody(payload: any): { text: string; html: string } {
     if (part.parts) {
       for (const subPart of part.parts) {
         const text = findText(subPart);
-        if (text) return removeMailingListFooter(text);
+        if (text) {
+          // remove mailing list footer
+          return removeMailingListFooter(text);
+        }
       }
     }
     return null;

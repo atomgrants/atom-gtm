@@ -1,5 +1,3 @@
-
-
 export async function testConnection(gmail: any): Promise<number> {
   const response = await gmail.users.messages.list({
     userId: "me",
@@ -9,7 +7,6 @@ export async function testConnection(gmail: any): Promise<number> {
 }
 
 export async function getEmails(gmail: any, count: number, sinceDate: Date | null, pageToken?: string) {
-  //get timestamp in unix format
   let unixTimestamp: number;
   if (sinceDate === null) {
     unixTimestamp = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
@@ -17,10 +14,9 @@ export async function getEmails(gmail: any, count: number, sinceDate: Date | nul
     unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
   }
 
-const senders = ["resadm-l@lists.healthresearch.org", "esdrasntuyenabo40@gmail.com"];
-const query = `after:${unixTimestamp} (from:${senders[0]} OR from:${senders[1]})`;
+  const senders = ["resadm-l@lists.healthresearch.org", "esdrasntuyenabo40@gmail.com"];
+  const query = `after:${unixTimestamp} (from:${senders[0]} OR from:${senders[1]})`;
 
-  //get emails since date
   const response = await gmail.users.messages.list({
     userId: "me",
     maxResults: count,
@@ -29,7 +25,6 @@ const query = `after:${unixTimestamp} (from:${senders[0]} OR from:${senders[1]})
     format: "full",
   });
 
-  // Check if there are any messages
   if (!response.data.messages || response.data.messages.length === 0) {
     return { emailsList: [], length: 0, nextPageToken: undefined };
   }
@@ -45,12 +40,11 @@ const query = `after:${unixTimestamp} (from:${senders[0]} OR from:${senders[1]})
       id: msg.id,
       snippet: msgDetail.data.snippet,
       payload: msgDetail.data.payload,
-      text: extractReplyContent(text).replace(/[\r\n]+/g, ' '), //text version of the email body
-      headers: msgDetail.data.payload?.headers, //contain subject, from, date
+      text: extractReplyContent(text).replace(/[\r\n]+/g, ' '),
+      headers: msgDetail.data.payload?.headers,
       internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
     }
   }));
-  //return msg, number of messages found, and nextPageToken
   return { emailsList: msg, length: response.data.messages.length, nextPageToken: response.data.nextPageToken };
 }
 

@@ -15,7 +15,7 @@ const isProduction = true;
 /**email utils***/
 /*convert email to db format*/
 export const convertEmailToDbFormat = (email: any) => {
-  const fromHeader = email.headers?.find((h: { name: string }) => h.name === 'From')?.value ||'';
+  const fromHeader = email.headers?.find((h: { name: string }) => h.name === 'From')?.value || '';
   const subject = email.headers?.find((h: { name: string }) => h.name === 'Subject')?.value || '';
   return {
     sender_name: extractName(fromHeader),
@@ -177,23 +177,26 @@ export const discordNotification = async ({
 };
 
 function formatLinks(text: string): string {
-  // Improved regex: matches full URLs with query params, etc.
   const urlRegex = /<?((https?:\/\/|www\.)[^\s<>()[\]]+)>?/g;
   return text.replace(urlRegex, (fullMatch, captureGroup1) => {
-    // Remove leading < and trailing > and punctuation
-    //let cleanUrl = url.replace(/^<+/, '').replace(/>+$/, '');
-    // Optionally, remove trailing punctuation that is not part of the URL
     const cleanUrl = captureGroup1.replace(/[.,!?;:'")\]]+$/, '');
     const normalizedUrl = cleanUrl.startsWith('www.')
       ? `https://${cleanUrl}`
       : cleanUrl;
-    return `[${normalizedUrl.split('https://')[1]}](<${normalizedUrl}>)`;
+    // Extract the domain and path for display, regardless of protocol
+    let displayText = normalizedUrl;
+    if (normalizedUrl.startsWith('https://')) {
+      displayText = normalizedUrl.replace('https://', '');
+    } else if (normalizedUrl.startsWith('http://')) {
+      displayText = normalizedUrl.replace('http://', '');
+    }
+    return `[${displayText}](<${normalizedUrl}>)`;
   });
 }
 
 // function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
 function contentKeywordFilter(body: string, subject: string): boolean {
   return keywords.some((keyword) => keyword && (body.toLowerCase().includes(keyword.toLowerCase()) ||
-        subject.toLowerCase().includes(keyword.toLowerCase()))
+    subject.toLowerCase().includes(keyword.toLowerCase()))
   );
 }

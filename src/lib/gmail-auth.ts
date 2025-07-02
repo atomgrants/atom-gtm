@@ -7,7 +7,6 @@ const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 let authClient: JWT;
 
 function loadServiceAccountCredentials() {
-  //const json = fs.readFileSync(SERVICE_ACCOUNT_FILE, 'utf8');
   const json = process.env.GOOGLE_AUTH_JSON;
   if (!json) throw new Error('GOOGLE_AUTH_JSON is not set');
   return JSON.parse(json);

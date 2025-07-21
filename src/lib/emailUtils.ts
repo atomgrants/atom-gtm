@@ -195,7 +195,7 @@ function formatLinks(text: string): string {
 }
 
 // function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
-function contentKeywordFilter(body: string, subject: string, keywords: string[]): boolean {
+export function contentKeywordFilter(body: string, subject: string, keywords: string[]): boolean {
   return keywords.some((keyword) => keyword && (body.toLowerCase().includes(keyword.toLowerCase()) ||
     subject.toLowerCase().includes(keyword.toLowerCase()))
   );

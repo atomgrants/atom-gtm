@@ -10,14 +10,14 @@ export async function GET(request: Request) {
     .from('emails')
     .select('*')
     .or(orFilter)
-    .limit(1)
 
   if (error) {
     console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  console.log({data, error});
+  console.log(data.length);
+  console.log(data);
 
   return NextResponse.json({ success: true });
 }

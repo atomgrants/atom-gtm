@@ -37,31 +37,30 @@ export default function HomePage() {
       <Head>
         <title>Hi</title>
       </Head>
-      <section className='bg-white'>
         <header>
-          <div className='layout relative flex flex-col  justify-center py-12 text-center'>
+          <div className='relative flex flex-col mt-10 text-center'>
             Job Postings
           </div>
-          <div>
-            <Card className='w-full max-w-sm relative flex flex-col items-center'>
+        </header>
+      <section className='bg-white min-h-screen'>
+          <div className='flex flex-row justify-center items-center mt-5'>
+            <Card className='w-[360px] h-[310px] flex flex-col items-center justify-center overflow-y-auto'>
               <CardHeader>
                 <Avatar className='mb-5'>
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage src="https://github.com/evilrabbit.png" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <CardTitle>Director of Pre-Award Administration </CardTitle>
-                <CardDescription>Middlebury College</CardDescription>
-                <ButtonLink className='mt-10' href='' variant='light'>
-                  Apply externaly
+                <CardDescription className=''>Middlebury College</CardDescription>
+                <CardDescription className=''> 5 days ago </CardDescription>
+                <div>
+                <ButtonLink className="mt-10 block text-center w-fit" href='' variant='dark' size='sm'>
+                  Apply Now
                 </ButtonLink>
+                </div>
               </CardHeader>
-              <CardContent>
-              </CardContent>
-              <CardFooter>
-              </CardFooter>
             </Card>
           </div>
-        </header>
       </section>
     </main>
   );

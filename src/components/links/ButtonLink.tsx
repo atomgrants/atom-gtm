@@ -55,7 +55,7 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           //#region  //*=========== Size ===========
           [
             size === 'base' && ['px-3 py-1.5', 'text-sm md:text-base'],
-            size === 'sm' && ['px-2 py-1', 'text-xs md:text-sm'],
+            size === 'sm' && ['px-4 py-1', 'text-xs md:text-sm'],
           ],
           //#endregion  //*======== Size ===========
           //#region  //*=========== Variants ===========
@@ -65,7 +65,6 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               'border-primary-600 border',
               'hover:bg-primary-600 hover:text-white',
               'active:bg-primary-700',
-              'disabled:bg-primary-700',
             ],
             variant === 'outline' && [
               'text-primary-500',

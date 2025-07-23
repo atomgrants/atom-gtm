@@ -5,26 +5,14 @@ import * as React from 'react';
 import '@/lib/env';
 
 import JobCard from '@/components/job-card/job-card';
+import PaginationMain from '@/components/utils/pagination';
 
-
-
-
-/**
- * SVGR Support
- * Caveat: No React Props Type.
- *
- * You can override the next-env if the type is important to you
- * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
- */
-
-// !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
-// Before you begin editing, follow all comments with `STARTERCONF`,
-// to customize the default configuration.
 
 export default function HomePage() {
-  const n = [0,1,2,3,4]
+  const n = [0]
   return (
-    <main>
+    <div className='flex flex-col min-h-screen bg-white'>
+    <main className='flex-1 flex-col items-center'>
       <Head>
         <title>Atom Job Posting Board</title>
       </Head>
@@ -33,8 +21,9 @@ export default function HomePage() {
             Atom Job Postings
           </div>
         </header>
-      <section className='flex justify-center items-center bg-white min-h-screen'>
-        <ul className='grid grid-cols-3 gap-x-7 auto-rows-[350px]'>
+      <section className='flex flex-col items-center'>
+        <div className='mt-10'>
+        <ul className='grid grid-cols-3 gap-x-7 auto-rows-[350px] justify-center'>
         {
          n.map((i) => 
           <li key={i}>
@@ -44,7 +33,12 @@ export default function HomePage() {
         }
         </ul>
         {/*<JobCard/>*/}
+        </div>
       </section>
+      <footer>
+          <PaginationMain/>
+      </footer>
     </main>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+
 export async function testConnection(gmail: any): Promise<number> {
   const response = await gmail.users.messages.list({
     userId: "me",
@@ -124,7 +125,10 @@ function extractEmailBody(payload: any): { text: string; html: string } {
 
   const textBody = findText(payload) || '';
   const htmlBody = findHtml(payload) || '';
-  return { text: textBody, html: htmlBody };
+  //double check footer clean up
+  const finalTextBody = removeMailingListFooter(textBody)
+
+  return { text: finalTextBody, html: htmlBody };
 }
 
 function removeMailingListFooter(body: string): string {

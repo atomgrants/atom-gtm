@@ -1,4 +1,4 @@
-'use server';
+//'use server';
 
 import { NextResponse } from 'next/server';
 
@@ -11,7 +11,7 @@ import { EmailInsert } from '@/types/email';
 
 
 // set it to true to send discord notification
-const isProduction = true;
+const isProduction = false;
 /**email utils***/
 /*convert email to db format*/
 export const convertEmailToDbFormat = (email: any) => {
@@ -51,7 +51,7 @@ export const insertEmail = async (email: EmailInsert) => {
   //discord notification
   if (isProduction) {
     //only send discord notification if the email contains keywords
-    if (contentKeywordFilter(data[0].body, data[0].subject, keywords)) {
+    if (contentKeywordFilter(data[0].body, data[0].subject)) {
       await discordNotification({
         email: data[0].sender_email_address,
         name: data[0].sender_name,
@@ -195,7 +195,7 @@ function formatLinks(text: string): string {
 }
 
 // function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
-export function contentKeywordFilter(body: string, subject: string, keywords: string[]): boolean {
+export function contentKeywordFilter(body: string, subject: string): boolean {
   return keywords.some((keyword) => keyword && (body.toLowerCase().includes(keyword.toLowerCase()) ||
     subject.toLowerCase().includes(keyword.toLowerCase()))
   );

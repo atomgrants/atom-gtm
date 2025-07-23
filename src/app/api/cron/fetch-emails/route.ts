@@ -44,7 +44,7 @@ export async function GET(request: Request) {
     const gmail = createServiceAccountClient();
 
     const { attemptFetch, allNewEmails } = await getNewEmails(gmail);
-    console.log('Attempt fetch:', attemptFetch);
+    //console.log('Attempt fetch:', attemptFetch);
     console.log('All new emails:', allNewEmails.length);
 
     if (attemptFetch === allNewEmails.length) {

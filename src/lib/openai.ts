@@ -25,3 +25,5 @@ const main = async () => {
     console.log(error)
   }
 }
+
+main().then(result => { console.log(result)})

@@ -63,3 +63,14 @@ export const keywords = [
   'better than Pivot',
   'alternative to SPIN',
 ];
+export const jobKeywords = [
+  'Job',
+  'Job Opening',
+  'job opportunities',
+  'career opportunity',
+  'career',
+  'Job Postings',
+  'Job Posting',
+  'Hiring',
+  'opening',
+]

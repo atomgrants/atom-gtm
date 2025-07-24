@@ -1,3 +1,4 @@
+
 export async function testConnection(gmail: any): Promise<number> {
   const response = await gmail.users.messages.list({
     userId: "me",
@@ -50,25 +51,25 @@ export async function getEmails(gmail: any, count: number, sinceDate: Date | nul
 
 export function extractName(fromHeader: string): string {
   if (!fromHeader) return '';
-  
+
   // "GitHub <noreply@github.com>" -> "GitHub"
   if (fromHeader.includes('<')) {
     return fromHeader.split('<')[0].trim();
   }
-  
+
   // Fallback: if no <>, use part before @
   return fromHeader.split('@')[0];
 }
 
 export function extractEmail(fromHeader: string): string {
   if (!fromHeader) return '';
-  
+
   // Extract email between < and >
   const match = fromHeader.match(/<([^>]+)>/);
   if (match) {
     return match[1]; // "noreply@github.com"
   }
-  
+
   // Fallback: assume the whole string is an email
   return fromHeader.trim();
 }
@@ -124,7 +125,10 @@ function extractEmailBody(payload: any): { text: string; html: string } {
 
   const textBody = findText(payload) || '';
   const htmlBody = findHtml(payload) || '';
-  return { text: textBody, html: htmlBody };
+  //double check footer clean up
+  const finalTextBody = removeMailingListFooter(textBody)
+
+  return { text: finalTextBody, html: htmlBody };
 }
 
 function removeMailingListFooter(body: string): string {

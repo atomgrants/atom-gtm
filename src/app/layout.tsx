@@ -20,11 +20,8 @@ export const metadata: Metadata = {
   // !STARTERCONF this is the default favicon, you can generate your own from https://realfavicongenerator.net/
   // ! copy to /favicon folder
   icons: {
-    icon: '/favicon/favicon.ico',
-    shortcut: '/favicon/favicon-16x16.png',
-    apple: '/favicon/apple-touch-icon.png',
+    icon: '/favicon.ico',
   },
-  manifest: `/favicon/site.webmanifest`,
   openGraph: {
     url: siteConfig.url,
     title: siteConfig.title,

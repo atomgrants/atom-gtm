@@ -11,7 +11,7 @@ import { EmailInsert } from '@/types/email';
 
 
 // set it to true to send discord notification
-const isProduction = true;
+const isProduction = false;
 /**email utils***/
 /*convert email to db format*/
 export const convertEmailToDbFormat = (email: any) => {

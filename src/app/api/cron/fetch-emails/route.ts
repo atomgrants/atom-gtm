@@ -6,17 +6,19 @@ import { createServiceAccountClient } from '@/lib/gmail-auth';
 export async function GET(request: Request) {
   //verify request is from vercel cron
 
-  const cronSecret = process.env.CRON_SECRET;
-  const authHeader = request.headers.get('Authorization');
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
-  }
+  /*
+    const cronSecret = process.env.CRON_SECRET;
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Unauthorized',
+        },
+        { status: 401 }
+      );
+    }
+  */
 
   /*Cron logic*/
   console.log('Starting fetch-emails API call');

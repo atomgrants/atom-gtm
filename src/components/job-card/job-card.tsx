@@ -18,7 +18,7 @@ import {
             <Card className='w-[340px] h-[300px] flex flex-col items-center justify-center overflow-y-auto'>
               <CardHeader>
                 <Avatar className='mb-5'>
-                  <AvatarImage src="https://github.com/evilrabbit.png" />
+                  <AvatarImage src="/images/atom_logo.png" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <CardTitle>Director of Pre-Award Administration </CardTitle>

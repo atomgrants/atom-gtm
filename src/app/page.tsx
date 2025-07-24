@@ -9,7 +9,8 @@ import PaginationMain from '@/components/utils/pagination';
 
 
 export default function HomePage() {
-  const n = [0]
+  //const n = [0]
+  const n = [0,1,2]
   return (
     <div className='flex flex-col min-h-screen bg-white'>
       <main className='flex-1 flex-col items-center'>

@@ -1,6 +1,5 @@
 //'use server';
 
-import { NextResponse } from 'next/server';
 
 import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
@@ -36,14 +35,12 @@ export const insertEmail = async (email: EmailInsert) => {
     .select();
   if (error) {
     console.error('Error inserting email:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Error inserting email',
-        error: error,
-      },
-      { status: 500 }
-    );
+    return {
+      success: false,
+      message: 'Error inserting email',
+      error: error,
+      status: 500
+    }
   }
 
   console.log('Email inserted:', data);
@@ -62,14 +59,12 @@ export const insertEmail = async (email: EmailInsert) => {
     }
   }
 
-  return NextResponse.json(
-    {
-      success: true,
-      message: 'Email inserted',
-      data: data,
-    },
-    { status: 200 }
-  );
+  return {
+    success: true,
+    message: 'Email inserted',
+    data: data,
+    status: 200
+  }
 };
 
 /*get last saved email*/

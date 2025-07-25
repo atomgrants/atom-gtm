@@ -1,8 +1,12 @@
 import dotenv from 'dotenv'
 import OpenAI from "openai";
 
+import { convertJobToDbFormat,insertJob } from '@/lib/jobUtils';
+
 import { jobSeed } from '@/data/job-seed'; //for testing
 import { prompt } from '@/data/openai_data';
+
+import { JobInsert } from '@/types/job';
 
 dotenv.config({path:['.env.local', '.env']})
 
@@ -27,3 +31,11 @@ const main = async () => {
 }
 
 main().then(result => { console.log(result)})
+
+//test insert job to db here
+
+main().then(result => {
+  const cleanData: JobInsert= convertJobToDbFormat(jobSeed[3], result[0]);
+  insertJob(cleanData)
+})
+

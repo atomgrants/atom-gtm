@@ -1,6 +1,7 @@
 'use client'
 
 
+import { useEffect, useState } from 'react';
 import ButtonLink from '@/components/links/ButtonLink';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -11,6 +12,8 @@ import {
 } from "@/components/ui/card"
 
  const JobCard = ()=> {
+
+ 
   //fetch job data here
   return(
 
@@ -32,7 +35,6 @@ import {
               </CardHeader>
             </Card>
           //</div>
-
   )
 
 }

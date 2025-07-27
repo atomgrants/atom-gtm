@@ -1,9 +1,16 @@
 'use client'
 
 
-import { useEffect, useState } from 'react';
+
 import ButtonLink from '@/components/links/ButtonLink';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+interface JobInfo {
+  job_title: string,
+  organization: string,
+  url: string,
+  time_posted: string
+}
+
 import {
   Card,
   CardDescription,
@@ -11,9 +18,25 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
- const JobCard = ()=> {
+ const JobCard = ({job_title, organization, url, time_posted}: JobInfo) => {
+  const pastDate: any = new Date(time_posted)
+  const today: any = new Date()
+  const diffMs: any = today - pastDate //difference in milliseconds
+  const diffDays = Math.floor((diffMs) / (1000 * 60 * 60 * 24))
 
- 
+  // Format the time display
+  const getTimeDisplay = () => {
+    if (diffDays < 0) {
+      return 'Recently posted'
+    } else if (diffDays === 0) {
+      return 'Today'
+    } else if (diffDays === 1) {
+      return '1 day ago'
+    } else {
+      return `${diffDays} days ago`
+    }
+  }
+
   //fetch job data here
   return(
 
@@ -24,11 +47,11 @@ import {
                   <AvatarImage src="/images/atom_logo.png" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-                <CardTitle>Director of Pre-Award Administration </CardTitle>
-                <CardDescription className=''>Middlebury College</CardDescription>
-                <CardDescription className=''> 5 days ago </CardDescription>
+                <CardTitle>{job_title}</CardTitle>
+                <CardDescription>{organization}</CardDescription>
+                <CardDescription>{getTimeDisplay()}</CardDescription>
                 <div>
-                <ButtonLink className="mt-10 block text-center w-fit" href='' variant='dark' size='sm'>
+                <ButtonLink className="mt-10 block text-center w-fit" href= {url} variant='dark' size='sm'>
                   Apply Now
                 </ButtonLink>
                 </div>

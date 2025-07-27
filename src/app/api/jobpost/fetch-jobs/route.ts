@@ -5,7 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { jobKeywords } from '@/data/keywords';
 
 export async function GET(request: Request) {
-  const orFilter = jobKeywords.map((keyword) => `(subject.ilike.%${keyword}%)`).join(',');
+  const orFilter = jobKeywords.map((keyword) => `subject.ilike.%${keyword}%`).join(',');
   const { data, error } = await supabaseAdmin
     .from('emails')
     .select('*')
@@ -20,6 +20,11 @@ export async function GET(request: Request) {
   console.log(data);
 
   return NextResponse.json(
-    { success: true, data}
+    {
+      success: true,
+      message: "Job Emails fetched Successfully",
+      jobEmail: data
+
+    }
   );
 }

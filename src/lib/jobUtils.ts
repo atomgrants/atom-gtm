@@ -1,4 +1,5 @@
 
+
 import { supabaseAdmin } from "@/lib/supabase";
 
 import { EmailInsert } from "@/types/email";
@@ -12,10 +13,9 @@ export const insertJob = async (job:JobInsert)=> {
     if(error){
       console.error('Error inserting job:', error)
       return {
-        success: true,
+        success: false,
         message: 'Failed inserting job',
-        data: data,
-        status: 200
+        status: 500
       }
     }
     console.log('Jobs inserted:', data)
@@ -30,4 +30,20 @@ export const convertJobToDbFormat = (jobPost: EmailInsert, openaiOutput: OpenAIO
       email_body: jobPost.body,
       time: jobPost.date_time_sent
   }
+}
+
+//get job from jobs table
+export const getJobFromDb = async ()=> {
+  const {data, error} = await supabaseAdmin
+    .from('jobs')
+    .select('*')
+    if(error){
+      console.error('Error fetching jobs:', error)
+      return {
+        success: false,
+        message: 'Failed fetching job',
+        status: 500
+      }
+    }
+    return data
 }

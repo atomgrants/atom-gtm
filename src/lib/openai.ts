@@ -6,7 +6,7 @@ import { convertJobToDbFormat,insertJob } from '@/lib/jobUtils';
 import { jobSeed } from '@/data/job-seed'; //for testing
 import { prompt } from '@/data/openai_data';
 
-import { JobInsert } from '@/types/job';
+import { EmailInsert } from '@/types/email';
 
 dotenv.config({path:['.env.local', '.env']})
 
@@ -16,13 +16,13 @@ const client = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY'],
 });
 
-const main = async () => {
+const cleanJobEmail = async (inputPrompt: string) => {
   try {
 
     const response = await client.responses.create({
       model: "gpt-4.1-nano",
       instructions: 'You are a coding assistant',
-      input: finalPrompt //working on it
+      input: inputPrompt //working on it
     });
     return JSON.parse(response.output_text)
   } catch (error) {
@@ -30,12 +30,19 @@ const main = async () => {
   }
 }
 
-main().then(result => { console.log(result)})
-
+//cleanJobEmail().then(result => { console.log(result)})
 //test insert job to db here
 
-main().then(result => {
-  const cleanData: JobInsert= convertJobToDbFormat(jobSeed[3], result[0]);
-  insertJob(cleanData)
-})
+const fetchTest = async (jobSeed: EmailInsert[]) => {
+
+  for(const element of jobSeed){
+    const inputPrompt = `${prompt} ${JSON.stringify(element)}`;
+    const openaiOutput = await cleanJobEmail(inputPrompt)
+    const formatOpenaiOutput = convertJobToDbFormat(element, openaiOutput[0])
+    await insertJob(formatOpenaiOutput)
+  }
+  console.log("jobs inserted")
+}
+
+fetchTest(jobSeed)
 

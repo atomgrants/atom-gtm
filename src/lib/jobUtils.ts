@@ -1,6 +1,7 @@
 
 
 import { supabaseAdmin } from "@/lib/supabase";
+import crypto from 'crypto'
 
 import { EmailInsert } from "@/types/email";
 import { JobInsert, OpenAIOutput } from "@/types/job";
@@ -46,4 +47,43 @@ export const getJobFromDb = async ()=> {
       }
     }
     return data
+}
+
+
+/**
+ * Normalize text: strip HTML, collapse whitespace, lowercase.
+ */
+function normalizeBody(text: string): string {
+  return text
+    .replace(/<[^>]+>/g, '')           // Remove HTML tags
+    .replace(/\s+/g, ' ')             // Collapse whitespace
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * Compute hash
+ */
+function computeHash(text: string): string {
+  return crypto.createHash('sha256').update(text, 'utf8').digest('hex');
+}
+
+/**
+ * Deduplicate messages based on normalized body hash.
+ */
+export function deduplicateByBody(messages: EmailInsert[]): EmailInsert[] {
+  const seen = new Set<string>();
+  const unique: EmailInsert[] = [];
+
+  for (const msg of messages) {
+    const normalized = normalizeBody(msg.body);
+    const hash = computeHash(normalized);
+
+    if (!seen.has(hash)) {
+      seen.add(hash);
+      unique.push(msg);
+    }
+  }
+
+  return unique;
 }

@@ -1,13 +1,11 @@
 import dotenv from 'dotenv'
 import OpenAI from "openai";
 
-import { convertJobToDbFormat,insertJob } from '@/lib/jobUtils';
+import { convertJobToDbFormat, insertJob, deduplicateByBody } from '@/lib/jobUtils';
 
 import { jobSeed } from '@/data/job-seed'; //for testing
 import { prompt } from '@/data/openai_data';
-
 import { EmailInsert } from '@/types/email';
-import { jobs } from 'googleapis/build/src/apis/jobs';
 
 dotenv.config({path:['.env.local', '.env']})
 
@@ -40,8 +38,9 @@ const chunkArray = (arr: EmailInsert[], batchSize: number): EmailInsert[][] => {
 
 const BATCH_SIZE = 10
 
-const fetchTest = async (jobSeed: EmailInsert[]) => {
-  const batches = chunkArray(jobSeed, BATCH_SIZE)
+const fetchTest = async (jobEmails: EmailInsert[]) => {
+  const deduplicateJobEmail = deduplicateByBody(jobEmails)
+  const batches = chunkArray(deduplicateJobEmail, BATCH_SIZE)
   for (const batch of batches) {
     // Create one input string with whole batch as JSON
     const inputPrompt = `${prompt} ${JSON.stringify(batch)}`;

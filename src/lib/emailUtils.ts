@@ -3,7 +3,6 @@
 
 import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
-
 import { keywords } from '@/data/keywords';
 
 import { EmailInsert } from '@/types/email';
@@ -127,6 +126,7 @@ export async function getNewEmails(gmail: any) {
       const emailData = await convertEmailToDbFormat(email);
       await insertEmail(emailData);
     }
+
     allNewEmails.push(...emailsList);
     pageToken = nextPageToken;
   } while (length === 50 && nextPageToken);
@@ -195,4 +195,3 @@ export function contentKeywordFilter(body: string, subject: string, keyword: str
     subject.toLowerCase().includes(keyword.toLowerCase()))
   );
 }
-

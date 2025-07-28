@@ -7,10 +7,10 @@ import { jobSeed } from '@/data/job-seed'; //for testing
 import { prompt } from '@/data/openai_data';
 
 import { EmailInsert } from '@/types/email';
+import { jobs } from 'googleapis/build/src/apis/jobs';
 
 dotenv.config({path:['.env.local', '.env']})
 
-const finalPrompt = `${prompt} ${JSON.stringify(jobSeed[3])}`;
 
 const client = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY'],
@@ -30,19 +30,32 @@ const cleanJobEmail = async (inputPrompt: string) => {
   }
 }
 
-//cleanJobEmail().then(result => { console.log(result)})
-//test insert job to db here
+const chunkArray = (arr: EmailInsert[], batchSize: number): EmailInsert[][] => {
+  const chunks: EmailInsert[][] = []
+  for (let i = 0; i < arr.length; i += batchSize) {
+    chunks.push(arr.slice(i, i + batchSize));
+  }
+  return chunks;
+}
+
+const BATCH_SIZE = 10
 
 const fetchTest = async (jobSeed: EmailInsert[]) => {
-
-  for(const element of jobSeed){
-    const inputPrompt = `${prompt} ${JSON.stringify(element)}`;
-    const openaiOutput = await cleanJobEmail(inputPrompt)
-    const formatOpenaiOutput = convertJobToDbFormat(element, openaiOutput[0])
-    await insertJob(formatOpenaiOutput)
+  const batches = chunkArray(jobSeed, BATCH_SIZE)
+  for (const batch of batches) {
+    // Create one input string with whole batch as JSON
+    const inputPrompt = `${prompt} ${JSON.stringify(batch)}`;
+    const openaiOutput = await cleanJobEmail(inputPrompt);
+    console.log("Batch length", batch.length)
+    
+    // openaiOutput is one array with all job objects from batch
+    // Map back each job object to corresponding email in batch
+    for (let i = 0; i < batch.length; i++) {
+      const formatOpenaiOutput = convertJobToDbFormat(batch[i], openaiOutput[i]);
+      await insertJob(formatOpenaiOutput);
+    }
   }
-  console.log("jobs inserted")
+  console.log("jobs inserted in batches");
 }
 
 fetchTest(jobSeed)
-

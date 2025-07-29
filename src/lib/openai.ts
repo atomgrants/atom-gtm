@@ -7,7 +7,7 @@ import {
   insertJob,
 } from '@/lib/jobUtils';
 
-import { jobSeed } from '@/data/job-seed'; //for testing
+//for testing
 import { prompt } from '@/data/openai_data';
 
 import { EmailInsert } from '@/types/email';
@@ -41,7 +41,8 @@ const chunkArray = (arr: EmailInsert[], batchSize: number): EmailInsert[][] => {
 
 const BATCH_SIZE = 10;
 
-const fetchTest = async (jobEmails: EmailInsert[]) => {
+// clean, format, and save Job Email
+const processJobEmail = async (jobEmails: EmailInsert[]) => {
   const deduplicateJobEmail = deduplicateByBody(jobEmails);
   const batches = chunkArray(deduplicateJobEmail, BATCH_SIZE);
   for (const batch of batches) {
@@ -63,4 +64,4 @@ const fetchTest = async (jobEmails: EmailInsert[]) => {
   console.log('jobs inserted in batches');
 };
 
-fetchTest(jobSeed);
+//fetchTest(jobSeed);

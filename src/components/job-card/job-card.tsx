@@ -34,14 +34,14 @@ const JobCard = ({ job_title, organization, url, time_posted }: JobInfo) => {
   return (
     // <div className='flex flex-row justify-center items-center mt-5'>
     <Card className='w-[340px] h-[300px] flex flex-col items-center justify-center overflow-hidden'>
-      <CardHeader>
+      <CardHeader className='w-full'>
         <Avatar className='mb-5'>
           <AvatarImage src='/images/atom_logo.png' />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <CardTitle className='line-clamp-1'>{job_title}</CardTitle>
+        <CardTitle className='line-clamp-1 w-full'>{job_title}</CardTitle>
         {/*<CardTitle className='line-clamp-2  min-h-[40px]'>{job_title}</CardTitle>*/}
-        <CardDescription>{organization}</CardDescription>
+        <CardDescription className='line-clamp-1 w-full'>{organization}</CardDescription>
         <CardDescription>{getTimeDisplay()}</CardDescription>
         <div>
           <ButtonLink

@@ -1,5 +1,3 @@
-
-
 import { supabaseAdmin } from "@/lib/supabase";
 import crypto from 'crypto'
 
@@ -32,23 +30,6 @@ export const convertJobToDbFormat = (jobPost: EmailInsert, openaiOutput: OpenAIO
       time: jobPost.date_time_sent
   }
 }
-
-//get job from jobs table
-export const getJobFromDb = async ()=> {
-  const {data, error} = await supabaseAdmin
-    .from('jobs')
-    .select('*')
-    if(error){
-      console.error('Error fetching jobs:', error)
-      return {
-        success: false,
-        message: 'Failed fetching job',
-        status: 500
-      }
-    }
-    return data
-}
-
 
 /**
  * Normalize text: strip HTML, collapse whitespace, lowercase.

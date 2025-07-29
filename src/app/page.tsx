@@ -7,12 +7,15 @@ import '@/lib/env';
 
 import JobCard from '@/components/job-card/job-card';
 import PaginationMain from '@/components/utils/pagination';
+import { getJobFromDb } from '@/lib/utils';
+import { JobInfo } from '@/types/job';
 
 
 
 
 export default function HomePage() {
-  const [jobs, setJobs] = useState<any[]>([])
+  const [jobs, setJobs] = useState<JobInfo[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true)
   //const n = [0]
   //const n = [0, 1, 2]
@@ -21,21 +24,27 @@ export default function HomePage() {
   const fetchJobs = async ()=> {
     try{
         setIsLoading(true)
+        setError(null)
 
-        const response = await fetch('/api/jobpost/fetch-jobs', {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'}
-        })
-
-        if(!response.ok){
-          throw new Error(`Failed to fetch jobs: ${response.status}`)
+        const mostRecentJobs = await getJobFromDb();
+        if (Array.isArray(mostRecentJobs)) {
+          const jobsForCard = mostRecentJobs.map(
+            ({ job_title, organization, job_url, time }) => ({
+              job_title,
+              organization,
+              url: job_url,           // map job_url to url
+              time_posted: time,      // map time to time_posted
+            })
+          );
+          setJobs(jobsForCard);
+        } else {
+          setError(mostRecentJobs.message || "Unknown error");
+          setJobs([]);
         }
 
-        const data = await response.json()
-        setJobs(data.jobEmail)
-
     }catch(err){
-      console.error("Error fetching jobs:", err)
+      setError("Error fetching jobs");
+      setJobs([]);
     }finally{
       setIsLoading(false)
     }
@@ -55,21 +64,22 @@ export default function HomePage() {
           <div className='relative flex flex-col mt-10 text-center font-semibold leading-none'>
             Atom Job Postings
           </div>
-        {isLoading && (
-            <div className='text-center text-gray-600 mt-4'>
-              Loading jobs...
-            </div>
-          )}
         </header>
         <section className='flex flex-col items-center'>
           <div className='mt-10'>
             <ul className='grid grid-cols-3 gap-x-7 auto-rows-[350px] justify-center'>
               {
-                n.map((i) =>
-                  <li key={i}>
-                    <JobCard />
+                jobs.map((job, index) => (
+
+                  <li key={index}>
+                    <JobCard 
+                      job_title={job.job_title}
+                      organization={job.organization}
+                      url={job.url}
+                      time_posted={job.time_posted}
+                    />
                   </li>
-                )
+                ))
               }
             </ul>
             {/*<JobCard/>*/}

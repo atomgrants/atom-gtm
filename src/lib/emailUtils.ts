@@ -4,8 +4,8 @@
 import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
 import { keywords } from '@/data/keywords';
-
 import { EmailInsert } from '@/types/email';
+import { JobInsert } from '@/types/job';
 
 
 // set it to true to send discord notification
@@ -25,6 +25,22 @@ export const convertEmailToDbFormat = (email: any) => {
     gmail_message_id: email.id,
   };
 };
+
+export const insertJob = async (job:JobInsert)=> {
+  const {data, error} = await supabaseAdmin
+    .from('jobs')
+    .insert(job)
+    .select()
+    if(error){
+      console.error('Error inserting job:', error)
+      return {
+        success: false,
+        message: 'Failed inserting job',
+        status: 500
+      }
+    }
+    console.log('Jobs inserted:', data)
+}
 
 /*insert email into db*/
 export const insertEmail = async (email: EmailInsert) => {

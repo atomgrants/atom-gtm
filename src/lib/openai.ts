@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+//import dotenv from 'dotenv'
 import OpenAI from "openai";
 
 import { convertJobToDbFormat, insertJob, deduplicateByBody } from '@/lib/jobUtils';
@@ -7,7 +7,7 @@ import { jobSeed } from '@/data/job-seed'; //for testing
 import { prompt } from '@/data/openai_data';
 import { EmailInsert } from '@/types/email';
 
-dotenv.config({path:['.env.local', '.env']})
+//dotenv.config({path:['.env.local', '.env']})
 
 
 const client = new OpenAI({
@@ -46,7 +46,7 @@ const fetchTest = async (jobEmails: EmailInsert[]) => {
     const inputPrompt = `${prompt} ${JSON.stringify(batch)}`;
     const openaiOutput = await cleanJobEmail(inputPrompt);
     console.log("Batch length", batch.length)
-    
+
     // openaiOutput is one array with all job objects from batch
     // Map back each job object to corresponding email in batch
     for (let i = 0; i < batch.length; i++) {

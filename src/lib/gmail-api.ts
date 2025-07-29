@@ -1,13 +1,17 @@
-
 export async function testConnection(gmail: any): Promise<number> {
   const response = await gmail.users.messages.list({
-    userId: "me",
+    userId: 'me',
     maxResults: 1,
   });
   return response.data.resultSizeEstimate || 0;
 }
 
-export async function getEmails(gmail: any, count: number, sinceDate: Date | null, pageToken?: string) {
+export async function getEmails(
+  gmail: any,
+  count: number,
+  sinceDate: Date | null,
+  pageToken?: string
+) {
   let unixTimestamp: number;
   if (sinceDate === null) {
     unixTimestamp = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
@@ -15,38 +19,49 @@ export async function getEmails(gmail: any, count: number, sinceDate: Date | nul
     unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
   }
 
-  const senders = ["resadm-l@lists.healthresearch.org", "esdrasntuyenabo40@gmail.com"];
+  const senders = [
+    'resadm-l@lists.healthresearch.org',
+    'esdrasntuyenabo40@gmail.com',
+  ];
   const query = `after:${unixTimestamp} (from:${senders[0]} OR from:${senders[1]})`;
 
   const response = await gmail.users.messages.list({
-    userId: "me",
+    userId: 'me',
     maxResults: count,
     q: query,
     pageToken: pageToken,
-    format: "full",
+    format: 'full',
   });
 
   if (!response.data.messages || response.data.messages.length === 0) {
     return { emailsList: [], length: 0, nextPageToken: undefined };
   }
 
-  const msg = await Promise.all(response.data.messages.map(async (msg: { id: string }) => {
-    const msgDetail = await gmail.users.messages.get({
-      userId: "me",
-      id: msg.id,
-      format: "full",
-    });
-    const { text } = extractEmailBody(msgDetail.data.payload);
-    return {
-      id: msg.id,
-      snippet: msgDetail.data.snippet,
-      payload: msgDetail.data.payload,
-      text: extractReplyContent(text).replace(/[\r\n]+/g, ' '),
-      headers: msgDetail.data.payload?.headers,
-      internalDate: new Date(Number(msgDetail.data.internalDate)).toISOString(),
-    }
-  }));
-  return { emailsList: msg, length: response.data.messages.length, nextPageToken: response.data.nextPageToken };
+  const msg = await Promise.all(
+    response.data.messages.map(async (msg: { id: string }) => {
+      const msgDetail = await gmail.users.messages.get({
+        userId: 'me',
+        id: msg.id,
+        format: 'full',
+      });
+      const { text } = extractEmailBody(msgDetail.data.payload);
+      return {
+        id: msg.id,
+        snippet: msgDetail.data.snippet,
+        payload: msgDetail.data.payload,
+        text: extractReplyContent(text).replace(/[\r\n]+/g, ' '),
+        headers: msgDetail.data.payload?.headers,
+        internalDate: new Date(
+          Number(msgDetail.data.internalDate)
+        ).toISOString(),
+      };
+    })
+  );
+  return {
+    emailsList: msg,
+    length: response.data.messages.length,
+    nextPageToken: response.data.nextPageToken,
+  };
 }
 
 export function extractName(fromHeader: string): string {
@@ -78,7 +93,7 @@ function extractReplyContent(body: string): string {
   // Common separators for replies/forwards
   const separators = [
     /^On .+ wrote:$/m, // Gmail, Apple Mail, etc.
-    /^From: .+$/m,     // Outlook, etc.
+    /^From: .+$/m, // Outlook, etc.
     /^-----Original Message-----$/m,
   ];
 
@@ -126,13 +141,14 @@ function extractEmailBody(payload: any): { text: string; html: string } {
   const textBody = findText(payload) || '';
   const htmlBody = findHtml(payload) || '';
   //double check footer clean up
-  const finalTextBody = removeMailingListFooter(textBody)
+  const finalTextBody = removeMailingListFooter(textBody);
 
   return { text: finalTextBody, html: htmlBody };
 }
 
 function removeMailingListFooter(body: string): string {
-  const marker = "This email was sent to team@atomgrants.com via the Research Administrator's mailing list.";
+  const marker =
+    "This email was sent to team@atomgrants.com via the Research Administrator's mailing list.";
   const index = body.indexOf(marker);
   if (index !== -1) {
     return body.substring(0, index).trim();

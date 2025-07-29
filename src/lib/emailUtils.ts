@@ -1,21 +1,24 @@
 //'use server';
 
-
 import { extractEmail, extractName, getEmails } from '@/lib/gmail-api';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { keywords } from '@/data/keywords';
 
 import { EmailInsert } from '@/types/email';
-
+import { JobInsert } from '@/types/job';
 
 // set it to true to send discord notification
-const isProduction = true;
+const isProduction = process.env.NODE_ENV === 'production';
 /**email utils***/
 /*convert email to db format*/
 export const convertEmailToDbFormat = (email: any) => {
-  const fromHeader = email.headers?.find((h: { name: string }) => h.name === 'From')?.value || '';
-  const subject = email.headers?.find((h: { name: string }) => h.name === 'Subject')?.value || '';
+  const fromHeader =
+    email.headers?.find((h: { name: string }) => h.name === 'From')?.value ||
+    '';
+  const subject =
+    email.headers?.find((h: { name: string }) => h.name === 'Subject')?.value ||
+    '';
   return {
     sender_name: extractName(fromHeader),
     sender_email_address: extractEmail(fromHeader),
@@ -25,6 +28,19 @@ export const convertEmailToDbFormat = (email: any) => {
     listserv_name: 'ResAdmin',
     gmail_message_id: email.id,
   };
+};
+
+export const insertJob = async (job: JobInsert) => {
+  const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
+  if (error) {
+    console.error('Error inserting job:', error);
+    return {
+      success: false,
+      message: 'Failed inserting job',
+      status: 500,
+    };
+  }
+  console.log('Jobs inserted:', data);
 };
 
 /*insert email into db*/
@@ -39,8 +55,8 @@ export const insertEmail = async (email: EmailInsert) => {
       success: false,
       message: 'Error inserting email',
       error: error,
-      status: 500
-    }
+      status: 500,
+    };
   }
 
   console.log('Email inserted:', data);
@@ -63,8 +79,8 @@ export const insertEmail = async (email: EmailInsert) => {
     success: true,
     message: 'Email inserted',
     data: data,
-    status: 200
-  }
+    status: 200,
+  };
 };
 
 /*get last saved email*/
@@ -127,6 +143,7 @@ export async function getNewEmails(gmail: any) {
       const emailData = await convertEmailToDbFormat(email);
       await insertEmail(emailData);
     }
+
     allNewEmails.push(...emailsList);
     pageToken = nextPageToken;
   } while (length === 50 && nextPageToken);
@@ -190,9 +207,15 @@ function formatLinks(text: string): string {
 }
 
 // function to filter out emails (body and subject) that don't contain keywords based on second column of keywords.csv file
-export function contentKeywordFilter(body: string, subject: string, keyword: string[]): boolean {
-  return keywords.some((keyword) => keyword && (body.toLowerCase().includes(keyword.toLowerCase()) ||
-    subject.toLowerCase().includes(keyword.toLowerCase()))
+export function contentKeywordFilter(
+  body: string,
+  subject: string,
+  keyword: string[]
+): boolean {
+  return keywords.some(
+    (keyword) =>
+      keyword &&
+      (body.toLowerCase().includes(keyword.toLowerCase()) ||
+        subject.toLowerCase().includes(keyword.toLowerCase()))
   );
 }
-

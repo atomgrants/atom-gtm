@@ -1,8 +1,8 @@
-import { JWT } from "google-auth-library"
-import { google } from "googleapis";
+import { JWT } from 'google-auth-library';
+import { google } from 'googleapis';
 
 //const SERVICE_ACCOUNT_FILE = "service-account.json" //path here
-const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
+const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 
 let authClient: JWT;
 
@@ -18,8 +18,7 @@ export function createServiceAccountClient() {
     email: credentials.client_email,
     key: credentials.private_key,
     scopes: SCOPES,
-    subject: "team@atomgrants.com"
+    subject: 'team@atomgrants.com',
   });
-  return google.gmail({ version: "v1", auth: authClient });
+  return google.gmail({ version: 'v1', auth: authClient });
 }
-

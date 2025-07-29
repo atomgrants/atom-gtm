@@ -73,4 +73,4 @@ export const jobKeywords = [
   'Job Posting',
   'Hiring',
   'opening',
-]
+];

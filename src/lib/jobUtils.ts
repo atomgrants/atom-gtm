@@ -1,43 +1,44 @@
-import { supabaseAdmin } from "@/lib/supabase";
-import crypto from 'crypto'
+import crypto from 'crypto';
 
-import { EmailInsert } from "@/types/email";
-import { JobInsert, OpenAIOutput } from "@/types/job";
+import { supabaseAdmin } from '@/lib/supabase';
 
-export const insertJob = async (job:JobInsert)=> {
-  const {data, error} = await supabaseAdmin
-    .from('jobs')
-    .insert(job)
-    .select()
-    if(error){
-      console.error('Error inserting job:', error)
-      return {
-        success: false,
-        message: 'Failed inserting job',
-        status: 500
-      }
-    }
-    console.log('Jobs inserted:', data)
-}
+import { EmailInsert } from '@/types/email';
+import { JobInsert, OpenAIOutput } from '@/types/job';
 
-export const convertJobToDbFormat = (jobPost: EmailInsert, openaiOutput: OpenAIOutput) => {
-  return{
-      sender_name: openaiOutput.sender_name,
-      job_title: openaiOutput.job_title,
-      organization: openaiOutput.organization,
-      job_url: openaiOutput.url,
-      email_body: jobPost.body,
-      time: jobPost.date_time_sent
+export const insertJob = async (job: JobInsert) => {
+  const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
+  if (error) {
+    console.error('Error inserting job:', error);
+    return {
+      success: false,
+      message: 'Failed inserting job',
+      status: 500,
+    };
   }
-}
+  console.log('Jobs inserted:', data);
+};
+
+export const convertJobToDbFormat = (
+  jobPost: EmailInsert,
+  openaiOutput: OpenAIOutput
+) => {
+  return {
+    sender_name: openaiOutput.sender_name,
+    job_title: openaiOutput.job_title,
+    organization: openaiOutput.organization,
+    job_url: openaiOutput.url,
+    email_body: jobPost.body,
+    time: jobPost.date_time_sent,
+  };
+};
 
 /**
  * Normalize text: strip HTML, collapse whitespace, lowercase.
  */
 function normalizeBody(text: string): string {
   return text
-    .replace(/<[^>]+>/g, '')           // Remove HTML tags
-    .replace(/\s+/g, ' ')             // Collapse whitespace
+    .replace(/<[^>]+>/g, '') // Remove HTML tags
+    .replace(/\s+/g, ' ') // Collapse whitespace
     .trim()
     .toLowerCase();
 }

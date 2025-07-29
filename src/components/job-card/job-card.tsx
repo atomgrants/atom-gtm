@@ -39,7 +39,8 @@ const JobCard = ({ job_title, organization, url, time_posted }: JobInfo) => {
           <AvatarImage src='/images/atom_logo.png' />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <CardTitle>{job_title}</CardTitle>
+        <CardTitle className='line-clamp-1'>{job_title}</CardTitle>
+        {/*<CardTitle className='line-clamp-2  min-h-[40px]'>{job_title}</CardTitle>*/}
         <CardDescription>{organization}</CardDescription>
         <CardDescription>{getTimeDisplay()}</CardDescription>
         <div>

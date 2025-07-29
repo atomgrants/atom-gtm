@@ -8,6 +8,8 @@ import '@/lib/env';
 import JobCard from '@/components/job-card/job-card';
 import PaginationMain from '@/components/utils/pagination';
 import { getJobFromDb } from '@/lib/utils';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
 import { JobInfo } from '@/types/job';
 
 
@@ -19,7 +21,30 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true)
   //const n = [0]
   //const n = [0, 1, 2]
-  const n = [0, 1, 2, 3, 4, 5]
+  const n = [0, 1, 2]
+
+const CardSkeleton = () => {
+  return (
+    <div className="w-[340px] h-[300px] flex flex-col items-center justify-center overflow-y-auto animate-pulse border rounded-lg p-4">
+      <div className="flex flex-col items-center space-y-3">
+    <Skeleton circle height={64} width={64} className="mb-5" />
+
+        {/* Title Placeholder */}
+        <Skeleton height={20} width="66%" />
+
+        {/* Description 1 Placeholder */}
+        <Skeleton height={14} width="50%" />
+
+        {/* Description 2 Placeholder */}
+        <Skeleton height={14} width="33%" />
+
+        {/* Button Placeholder */}
+        <Skeleton height={32} width={96} className="mt-10" />
+      </div>
+    </div>
+  );
+};
+
 
   const fetchJobs = async ()=> {
     try{
@@ -41,7 +66,6 @@ export default function HomePage() {
           setError(mostRecentJobs.message || "Unknown error");
           setJobs([]);
         }
-
     }catch(err){
       setError("Error fetching jobs");
       setJobs([]);
@@ -68,9 +92,14 @@ export default function HomePage() {
         <section className='flex flex-col items-center'>
           <div className='mt-10'>
             <ul className='grid grid-cols-3 gap-x-7 auto-rows-[350px] justify-center'>
-              {
+              {isLoading ? (
+                Array.from({length: 3}).map((_, index)=> 
+                  <li key={`loading-${index}`}>
+                    < CardSkeleton/>
+                  </li>
+                )
+              ) : (
                 jobs.map((job, index) => (
-
                   <li key={index}>
                     <JobCard 
                       job_title={job.job_title}
@@ -80,6 +109,7 @@ export default function HomePage() {
                     />
                   </li>
                 ))
+              )
               }
             </ul>
             {/*<JobCard/>*/}

@@ -33,7 +33,7 @@ const JobCard = ({ job_title, organization, url, time_posted }: JobInfo) => {
   return (
 
     // <div className='flex flex-row justify-center items-center mt-5'>
-    <Card className='w-[340px] h-[300px] flex flex-col items-center justify-center overflow-y-auto'>
+    <Card className='w-[340px] h-[300px] flex flex-col items-center justify-center overflow-hidden'>
       <CardHeader>
         <Avatar className='mb-5'>
           <AvatarImage src="/images/atom_logo.png" />

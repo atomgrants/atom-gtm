@@ -33,7 +33,7 @@ const cleanJobEmail = async (inputPrompt: string) => {
 
   } catch (error) {
     console.error(error);
-    console.log(jsonError)
+    //console.log(jsonError)
   }
 };
 
@@ -57,7 +57,7 @@ export const processJobEmail = async (jobEmails: any[]) => {
     const openaiOutput = await cleanJobEmail(inputPrompt);
 
     if (!openaiOutput || openaiOutput === "") {
-      console.log("Found Malformatted Job")
+      //console.log("Found Malformatted Job")
       continue;
     };
 
@@ -68,12 +68,10 @@ export const processJobEmail = async (jobEmails: any[]) => {
         batch[i],
         openaiOutput[i]
       );
-      const hasEmptyField = Object.values(formatOpenaiOutput).some(val => val === '');
-      if (hasEmptyField) continue;
       await insertJob(formatOpenaiOutput);
     }
   }
-  console.log('All jobs Processed');
+  //console.log('All jobs Processed');
 };
 
 //fetchTest(jobSeed);

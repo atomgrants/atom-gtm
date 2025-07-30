@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   }
 
   /*Cron logic*/
-  console.log('Starting fetch-emails API call');
+  //console.log('Starting fetch-emails API call');
 
   // check client connection
   try {
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     const canConnect = true;
 
     if (!canConnect) {
-      console.log('Gmail client connection failed');
+      //console.log('Gmail client connection failed');
       return NextResponse.json(
         {
           success: false,
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
 
     const { attemptFetch, allNewEmails } = await getNewEmails(gmail);
     //console.log('Attempt fetch:', attemptFetch);
-    console.log('All new emails:', allNewEmails.length);
+    //console.log('All new emails:', allNewEmails.length);
 
     if (attemptFetch === allNewEmails.length) {
       return NextResponse.json({

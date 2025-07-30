@@ -22,13 +22,24 @@ export const convertJobToDbFormat = (
   jobPost: EmailInsert,
   openaiOutput: OpenAIOutput
 ) => {
+  if (!openaiOutput) {
+    console.log('Error: Openai returned an Undefined output');
+    console.log(openaiOutput);
+    return {
+      sender_name: '',
+      job_title: '',
+      organization: '',
+      job_url: '',
+      time: '',
+    };
+  }
   return {
-    sender_name: openaiOutput.sender_name,
-    job_title: openaiOutput.job_title,
-    organization: openaiOutput.organization,
-    job_url: openaiOutput.url,
-    email_body: jobPost.body,
-    time: jobPost.date_time_sent,
+    sender_name: openaiOutput.sender_name || '',
+    job_title: openaiOutput.job_title || '',
+    organization: openaiOutput.organization || '',
+    job_url: openaiOutput.url || '',
+    email_body: jobPost.body || '',
+    time: jobPost.date_time_sent || '',
   };
 };
 

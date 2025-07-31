@@ -5,7 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { EmailInsert } from '@/types/email';
 import { JobInsert, OpenAIOutput } from '@/types/job';
 
-export const insertJob = async (job: JobInsert) => {
+export const insertJob = async (job: any) => {
   const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
     console.error('Error inserting job:', error);
@@ -15,20 +15,30 @@ export const insertJob = async (job: JobInsert) => {
       status: 500,
     };
   }
-  console.log('Jobs inserted:', data);
 };
 
 export const convertJobToDbFormat = (
   jobPost: EmailInsert,
   openaiOutput: OpenAIOutput
 ) => {
+  if (!openaiOutput) {
+    //console.log('Error: Openai returned an Undefined output');
+    //console.log(openaiOutput);
+    return {
+      sender_name: '',
+      job_title: '',
+      organization: '',
+      job_url: '',
+      time: '',
+    };
+  }
   return {
-    sender_name: openaiOutput.sender_name,
-    job_title: openaiOutput.job_title,
-    organization: openaiOutput.organization,
-    job_url: openaiOutput.url,
-    email_body: jobPost.body,
-    time: jobPost.date_time_sent,
+    sender_name: openaiOutput.sender_name || '',
+    job_title: openaiOutput.job_title || '',
+    organization: openaiOutput.organization || '',
+    job_url: openaiOutput.url || '',
+    email_body: jobPost.body || '',
+    time: jobPost.date_time_sent || '',
   };
 };
 

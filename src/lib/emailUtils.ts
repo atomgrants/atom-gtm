@@ -40,7 +40,6 @@ export const insertJob = async (job: JobInsert) => {
       status: 500,
     };
   }
-  console.log('Jobs inserted:', data);
 };
 
 /*insert email into db*/
@@ -59,7 +58,6 @@ export const insertEmail = async (email: EmailInsert) => {
     };
   }
 
-  console.log('Email inserted:', data);
 
   //discord notification
   if (isProduction) {
@@ -71,7 +69,6 @@ export const insertEmail = async (email: EmailInsert) => {
         subject: data[0].subject,
         message: formatLinks(data[0].body),
       });
-      console.log('Discord notification sent');
     }
   }
 
@@ -93,7 +90,7 @@ export async function getLastSavedEmail() {
     .single();
 
   if (error) {
-    console.log('No emails in database yet');
+    console.error(error)
     return null;
   }
 
@@ -108,12 +105,10 @@ export async function getNewEmails(gmail: any) {
   let lastSavedId: any = null;
   if (!lastSavedEmail) {
     // No emails in DB yet - get recent emails (last 24 hours)
-    console.log('No emails in database, fetching last 24 hours');
     sinceDate = null;
   } else {
     sinceDate = new Date(lastSavedEmail.date_time_sent);
     lastSavedId = lastSavedEmail.gmail_message_id;
-    console.log('Last saved email time:', sinceDate.toISOString());
   }
 
   let pageToken: string | undefined = undefined;
@@ -179,7 +174,7 @@ export const discordNotification = async ({
     }
   )
     .then(() => {
-      console.log('Discord notification fetch succeeded');
+      //console.log('Discord notification fetch succeeded');
       return true;
     })
     .catch((error) => {

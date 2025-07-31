@@ -32,6 +32,14 @@ Extract: sender_name, job_title, organization, url (omit missing fields)
 Return JSON array:
 [{sender_name: string, job_title: string, organization: string, url: string}]
 
-CRITICAL: 1:1 input-output correspondence. Never skip emails.
+CRITICAL REQUIREMENTS:
+- Return EXACTLY the same number of objects as input emails
+- Your response must be ONLY a valid JSON array, nothing else
+- Do not include markdown formatting, backticks, or any text outside the JSON
+- 1:1 correspondence between input emails and output objects
+
+Example format:
+[{"sender_name": "John Doe", "job_title": "Software Engineer", "organization": "Tech Corp", "url": "https://example.com/apply"}]
+
 
 Input:`;

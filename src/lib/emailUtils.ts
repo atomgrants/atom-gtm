@@ -58,7 +58,6 @@ export const insertEmail = async (email: EmailInsert) => {
     };
   }
 
-
   //discord notification
   if (isProduction) {
     //only send discord notification if the email contains keywords
@@ -90,7 +89,7 @@ export async function getLastSavedEmail() {
     .single();
 
   if (error) {
-    console.error(error)
+    console.error(error);
     return null;
   }
 

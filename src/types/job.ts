@@ -18,4 +18,5 @@ export interface JobInfo {
   organization: string;
   url: string;
   time_posted: string;
+  jobId: string;
 }

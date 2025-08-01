@@ -14,8 +14,11 @@ interface PaginationMainProps {
   onPageChange: (page: number) => void;
 }
 
-export default function PaginationMain({ currentPage, totalPages, onPageChange }: PaginationMainProps) {
-
+export default function PaginationMain({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationMainProps) {
   const handlePrevious = (e: React.MouseEvent) => {
     e.preventDefault();
     if (currentPage > 1) {
@@ -89,7 +92,11 @@ export default function PaginationMain({ currentPage, totalPages, onPageChange }
           <PaginationPrevious
             href='#'
             onClick={handlePrevious}
-            className={currentPage <= 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+            className={
+              currentPage <= 1
+                ? 'pointer-events-none opacity-50'
+                : 'cursor-pointer'
+            }
           />
         </PaginationItem>
         {visiblePages.map((page, index) => (
@@ -101,7 +108,7 @@ export default function PaginationMain({ currentPage, totalPages, onPageChange }
                 href='#'
                 onClick={(e) => handlePageClick(page as number, e)}
                 isActive={page === currentPage}
-                className="cursor-pointer"
+                className='cursor-pointer'
               >
                 {page}
               </PaginationLink>
@@ -112,7 +119,11 @@ export default function PaginationMain({ currentPage, totalPages, onPageChange }
           <PaginationNext
             href='#'
             onClick={handleNext}
-            className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+            className={
+              currentPage >= totalPages
+                ? 'pointer-events-none opacity-50'
+                : 'cursor-pointer'
+            }
           />
         </PaginationItem>
       </PaginationContent>

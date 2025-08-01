@@ -11,7 +11,13 @@ import {
 
 import { JobInfo } from '@/types/job';
 
-const JobCard = ({ job_title, organization, url, time_posted }: JobInfo) => {
+const JobCard = ({
+  job_title,
+  organization,
+  url,
+  time_posted,
+  jobId,
+}: JobInfo) => {
   const pastDate: any = new Date(time_posted);
   const today: any = new Date();
   const diffMs: any = today - pastDate; //difference in milliseconds
@@ -45,7 +51,7 @@ const JobCard = ({ job_title, organization, url, time_posted }: JobInfo) => {
           {organization}
         </CardDescription>
         <CardDescription>{getTimeDisplay()}</CardDescription>
-        <div>
+        <div className='flex flex-row justify-between w-full'>
           <ButtonLink
             className='mt-10 block text-center w-fit'
             href={url}
@@ -53,6 +59,14 @@ const JobCard = ({ job_title, organization, url, time_posted }: JobInfo) => {
             size='sm'
           >
             Apply Now
+          </ButtonLink>
+          <ButtonLink
+            className='mt-10 block text-center w-fit'
+            href={`/jobs/learn-more/${jobId}`}
+            variant='light'
+            size='sm'
+          >
+            Learn More
           </ButtonLink>
         </div>
       </CardHeader>

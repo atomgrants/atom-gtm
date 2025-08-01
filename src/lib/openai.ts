@@ -28,9 +28,10 @@ const cleanJobEmail = async (inputPrompt: string) => {
       input: inputPrompt, //working on it
     });
 
-    jsonError = response.output_text.replace(/^```json\s*/i, '').replace(/\s*```$/i, '');
+    jsonError = response.output_text
+      .replace(/^```json\s*/i, '')
+      .replace(/\s*```$/i, '');
     return JSON.parse(response.output_text);
-
   } catch (error) {
     console.error(error);
     //console.log(jsonError)
@@ -56,10 +57,10 @@ export const processJobEmail = async (jobEmails: any[]) => {
     const inputPrompt = `${prompt} ${JSON.stringify(batch)}`;
     const openaiOutput = await cleanJobEmail(inputPrompt);
 
-    if (!openaiOutput || openaiOutput === "") {
+    if (!openaiOutput || openaiOutput === '') {
       //console.log("Found Malformatted Job")
       continue;
-    };
+    }
 
     // openaiOutput is one array with all job objects from batch
     // Map back each job object to corresponding email in batch

@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import { getJobFromDb } from '@/lib/utils';
-
 import { useSearch } from '@/components/providers/searchContext';
 import { Input } from '@/components/ui/input';
 
@@ -11,8 +9,8 @@ export default function SearchJob() {
   const [jobsToShow, setJobsToShow] = useState<any[]>([]);
   const { searchResult, setSearchResult } = useSearch();
 
-  const jobs = getJobFromDb();
-  const mockResults = ['apple', 'banana', 'orange', 'grape', 'mango'];
+  //const jobs = getJobFromDb();
+  //const mockResults = ['apple', 'banana', 'orange', 'grape', 'mango'];
 
   return (
     <div>

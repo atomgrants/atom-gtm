@@ -12,16 +12,23 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
             <Head>
               <title>Atom Job Posting Board</title>
             </Head>
-            <div className='flex flex-row justify-between items-center w-full px-10 mt-10'>
-              <div className='w-40'>
+            <div className='flex flex-row justify-between items-center w-full px-6 mt-6'>
+              <div className='w-80'>
                 <BackToJobButton />
               </div>
               <h1 className='text-center antialiased font-bold leading-tight text-black text-4xl flex-1'>
-                Atom Job Postings
+                <span className='bg-gradient-to-br from-orange-600 to-orange-400 bg-clip-text text-transparent antialiased'>
+                  Atom
+                </span>{' '}
+                Job Postings
               </h1>
-              <div className='w-36'>
-                <Input type='search' placeholder='search job' />
-              {/*<SearchJob/>*/}
+              <div className='w-80'>
+                <Input
+                  className='w-[200px] mr-36 text-center'
+                  type='search'
+                  placeholder='search job'
+                />
+                {/*<SearchJob/>*/}
               </div>
             </div>
             {children}

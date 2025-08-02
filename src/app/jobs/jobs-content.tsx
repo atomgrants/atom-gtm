@@ -11,6 +11,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { getJobFromDb } from '@/lib/utils';
 
 import JobCard from '@/components/job-card/job-card';
+import { useSearch } from '@/components/providers/searchContext';
 import PaginationMain from '@/components/utils/pagination';
 
 import { JobInfo } from '@/types/job';
@@ -26,6 +27,7 @@ export default function JobsContent() {
   const router = useRouter();
 
   const currentPage = parseInt(searchParams.get('page') || '1');
+  const {searchResult} = useSearch()
 
   const totalJobs = jobs.length;
   const totalPages = Math.ceil(totalJobs / JOBS_PER_PAGE);
@@ -43,6 +45,52 @@ export default function JobsContent() {
         </div>
       </div>
     );
+  };
+
+  const handleSearch = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const mostRecentJobs = await getJobFromDb();
+      
+      // Check if the result is an error object
+      if (!Array.isArray(mostRecentJobs)) {
+        setError(mostRecentJobs.message || 'Error fetching jobs');
+        setJobs([]);
+        return;
+      }
+
+      if (searchResult && searchResult.trim()) {
+        const jobsForCard = mostRecentJobs.filter(
+          (job: any) => {
+            return job.job_title.toLowerCase().includes(searchResult.toLowerCase()) ||
+                   job.organization.toLowerCase().includes(searchResult.toLowerCase());
+          }
+        ).map((job: any) => ({
+          job_title: job.job_title,
+          organization: job.organization,
+          url: job.job_url, // map job_url to url
+          time_posted: job.time, // map time to time_posted
+          jobId: job.id,
+        }));
+        setJobs(jobsForCard);
+      } else {
+        // If no search term, show all jobs
+        const jobsForCard = mostRecentJobs.map((job: any) => ({
+          job_title: job.job_title,
+          organization: job.organization,
+          url: job.job_url, // map job_url to url
+          time_posted: job.time, // map time to time_posted
+          jobId: job.id,
+        }));
+        setJobs(jobsForCard);
+      }
+    } catch (error) {
+      setError('Error handling job search');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchJobs = async () => {
@@ -96,6 +144,11 @@ export default function JobsContent() {
       handlePageChange(1);
     }
   }, [totalPages, currentPage, isLoading]);
+
+  // Call handleSearch when searchResult changes
+  useEffect(() => {
+    handleSearch();
+  }, [searchResult]);
 
   return (
     <section className='flex flex-col items-center'>

@@ -1,7 +1,8 @@
 import Head from 'next/head';
 
 import BackToJobButton from '@/components/buttons/BackToJobButton';
-import { Input } from '@/components/ui/input';
+import { SearchProvider } from '@/components/providers/searchContext';
+import SearchJob from '@/components/searchJob';
 
 export default function JobLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
       <body>
         <div className='flex flex-col min-h-screen bg-white'>
           <main className='flex flex-col items-center'>
+            <SearchProvider>
             <Head>
               <title>Atom Job Posting Board</title>
             </Head>
@@ -23,15 +25,18 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
                 Job Postings
               </h1>
               <div className='w-80'>
+                <SearchJob/>
+                {/*
                 <Input
                   className='w-[200px] mr-36 text-center'
                   type='search'
                   placeholder='search job'
                 />
-                {/*<SearchJob/>*/}
+                */}
               </div>
             </div>
             {children}
+            </SearchProvider>
           </main>
         </div>
       </body>

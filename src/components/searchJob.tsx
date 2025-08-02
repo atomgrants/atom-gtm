@@ -4,22 +4,30 @@ import { useState } from 'react';
 
 import { getJobFromDb } from '@/lib/utils';
 
+import { useSearch } from '@/components/providers/searchContext';
+import { Input } from '@/components/ui/input';
+
 export default function SearchJob() {
   const [jobsToShow, setJobsToShow] = useState<any[]>([]);
+  const { searchResult, setSearchResult } = useSearch();
 
   const jobs = getJobFromDb();
   const mockResults = ['apple', 'banana', 'orange', 'grape', 'mango'];
 
   return (
     <div>
-      <input type='text' placeholder='search job' />
-      <ul className='absolute z-10 mt-1 w-full rounded bg-white border border-gray-200 shadow'>
-        {mockResults.map((item, index) => (
-          <li key={item} className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>
-            {item}
-          </li>
-        ))}
-      </ul>
+      <Input
+        className='w-[200px] mr-36 text-center'
+        type='search'
+        placeholder='search job'
+        value={searchResult}
+        onChange={(e) => setSearchResult(e.target.value)}
+        onKeyDown={(e)=> {
+          if(e.key === 'Enter'){
+            console.log(searchResult)
+          }
+        }}
+      />
     </div>
   );
 }

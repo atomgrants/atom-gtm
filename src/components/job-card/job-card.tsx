@@ -42,7 +42,7 @@ const JobCard = ({
     <Card className='w-[340px] h-[300px] flex flex-col items-center justify-center overflow-hidden'>
       <CardHeader className='w-full'>
         <Avatar className='mb-5'>
-          <AvatarImage src='/images/atom_logo.png' />
+          <AvatarImage src='https://github.com/evilrabbit.png' />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <CardTitle className='line-clamp-1 w-full'>{job_title}</CardTitle>
@@ -51,9 +51,9 @@ const JobCard = ({
           {organization}
         </CardDescription>
         <CardDescription>{getTimeDisplay()}</CardDescription>
-        <div className='flex flex-row justify-between w-full'>
+        <div className='flex items-start gap-2'>
           <ButtonLink
-            className='mt-10 block text-center w-fit'
+            className='mt-10 block text-center'
             href={url}
             variant='dark'
             size='sm'
@@ -61,7 +61,7 @@ const JobCard = ({
             Apply Now
           </ButtonLink>
           <ButtonLink
-            className='mt-10 block text-center w-fit'
+            className='mt-10 block text-center'
             href={`/jobs/learn-more/${jobId}`}
             variant='light'
             size='sm'

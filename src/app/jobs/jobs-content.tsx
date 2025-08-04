@@ -27,7 +27,7 @@ export default function JobsContent() {
   const router = useRouter();
 
   const currentPage = parseInt(searchParams.get('page') || '1');
-  const {searchResult} = useSearch()
+  const { searchResult } = useSearch();
 
   const totalJobs = jobs.length;
   const totalPages = Math.ceil(totalJobs / JOBS_PER_PAGE);
@@ -53,7 +53,7 @@ export default function JobsContent() {
       setError(null);
 
       const mostRecentJobs = await getJobFromDb();
-      
+
       // Check if the result is an error object
       if (!Array.isArray(mostRecentJobs)) {
         setError(mostRecentJobs.message || 'Error fetching jobs');
@@ -62,18 +62,24 @@ export default function JobsContent() {
       }
 
       if (searchResult && searchResult.trim()) {
-        const jobsForCard = mostRecentJobs.filter(
-          (job: any) => {
-            return job.job_title.toLowerCase().includes(searchResult.toLowerCase()) ||
-                   job.organization.toLowerCase().includes(searchResult.toLowerCase());
-          }
-        ).map((job: any) => ({
-          job_title: job.job_title,
-          organization: job.organization,
-          url: job.job_url, // map job_url to url
-          time_posted: job.time, // map time to time_posted
-          jobId: job.id,
-        }));
+        const jobsForCard = mostRecentJobs
+          .filter((job: any) => {
+            return (
+              job.job_title
+                .toLowerCase()
+                .includes(searchResult.toLowerCase()) ||
+              job.organization
+                .toLowerCase()
+                .includes(searchResult.toLowerCase())
+            );
+          })
+          .map((job: any) => ({
+            job_title: job.job_title,
+            organization: job.organization,
+            url: job.job_url, // map job_url to url
+            time_posted: job.time, // map time to time_posted
+            jobId: job.id,
+          }));
         setJobs(jobsForCard);
       } else {
         // If no search term, show all jobs
@@ -152,14 +158,8 @@ export default function JobsContent() {
 
   return (
     <section className='flex flex-col items-center'>
-      <div className='mt-10'>
-        {!isLoading && !error && totalJobs > 0 && (
-          <div className='text-center text-sm text-gray-600 mb-4'>
-            Showing {startIndex + 1}-{Math.min(endIndex, totalJobs)} of{' '}
-            {totalJobs} jobs
-          </div>
-        )}
-        <ul className='grid grid-cols-3 gap-x-7 auto-rows-[350px] justify-center'>
+      <div className='mt-4'>
+        <ul className='grid grid-cols-3 gap-x-7 auto-rows-[330px] justify-center'>
           {isLoading
             ? Array.from({ length: JOBS_PER_PAGE }).map((_, index) => (
                 <li key={`loading-${index}`}>
@@ -179,13 +179,21 @@ export default function JobsContent() {
               ))}
         </ul>
       </div>
-      {!isLoading && !error && totalPages > 1 && (
-        <PaginationMain
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
+      <div className='w-full max-w-4xl relative flex justify-center items-center'>
+        {!isLoading && !error && totalPages > 1 && (
+          <PaginationMain
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
+        {!isLoading && !error && totalJobs > 0 && (
+          <div className='absolute right-0 text-sm text-gray-600'>
+            Showing {startIndex + 1}-{Math.min(endIndex, totalJobs)} of{' '}
+            {totalJobs} jobs
+          </div>
+        )}
+      </div>
     </section>
   );
 }

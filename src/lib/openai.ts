@@ -11,7 +11,6 @@ import {
 import { prompt } from '@/data/openai_data';
 
 import { EmailInsert } from '@/types/email';
-import openai from 'openai';
 
 //dotenv.config({path:['.env.local', '.env']})
 
@@ -69,6 +68,7 @@ export const processJobEmail = async (jobEmails: any[]) => {
         batch[i],
         openaiOutput[i]
       );
+      //console.log(formatOpenaiOutput)
       await insertJob(formatOpenaiOutput);
     }
   }

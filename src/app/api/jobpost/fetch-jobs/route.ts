@@ -6,13 +6,35 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { jobKeywords } from '@/data/keywords';
 
 export async function GET(request: Request) {
+  // First, get the latest time from the jobs table
+  const { data: latestJob, error: latestJobError } = await supabaseAdmin
+    .from('jobs')
+    .select('time')
+    .order('time', { ascending: false })
+    .limit(1);
+
+  if (latestJobError) {
+    console.error('Error fetching latest job:', latestJobError);
+    return NextResponse.json(
+      { error: latestJobError.message },
+      { status: 500 }
+    );
+  }
+
+  // Build the filter for job-related emails
   const orFilter = jobKeywords
     .map((keyword) => `subject.ilike.%${keyword}%`)
     .join(',');
-  const { data, error } = await supabaseAdmin
-    .from('emails')
-    .select('*')
-    .or(orFilter);
+
+  // Build the query
+  let query = supabaseAdmin.from('emails').select('*').or(orFilter);
+
+  // Add date filter if we have a latest job
+  if (latestJob && latestJob.length > 0) {
+    query = query.gt('date_time_sent', latestJob[0].time);
+  }
+
+  const { data, error } = await query;
 
   if (error || !data) {
     console.error(error);
@@ -34,8 +56,7 @@ export async function GET(request: Request) {
 
   processJobEmail(jobEmails);
 
-  console.log(data.length);
-  //console.log(data);
+  //console.log(data.length);
 
   return NextResponse.json({
     success: true,

@@ -8,7 +8,7 @@ import { useSearch } from '@/components/providers/searchContext';
 export default function BackToJobButton() {
   const pathname = usePathname();
   const show = pathname !== '/jobs';
-  const {setSearchResult} = useSearch()
+  const { setSearchResult } = useSearch();
 
   const handleBackClick = () => {
     setSearchResult('');
@@ -17,11 +17,12 @@ export default function BackToJobButton() {
   if (!show) return null;
 
   return (
-    <ArrowLink 
-    direction='left' 
-    className='ml-10' 
-    href='/jobs' 
-    onClick={handleBackClick}>
+    <ArrowLink
+      direction='left'
+      className='text-sm'
+      href='/jobs'
+      onClick={handleBackClick}
+    >
       Back to Jobs
     </ArrowLink>
   );

@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+
 import JobsContent from './jobs-content';
 
 export default function JobsPage() {

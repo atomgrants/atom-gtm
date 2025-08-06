@@ -15,7 +15,6 @@ export default async function LearnMorePage({
     .select('*')
     .eq('id', params.jobId);
 
-
   if (error) {
     return <div>Error: {error.message}</div>;
   }
@@ -30,9 +29,9 @@ export default async function LearnMorePage({
         <section className='flex flex-col items-center w-full h-full'>
           <div className='h-[700px] w-full border border-gray-200 rounded-lg shadow-sm bg-white p-6 overflow-auto'>
             <div className='flex flex-row justify-between items-center'>
-            <MessageMarkdown>
-              {data[0].job_title || 'No title'}
-            </MessageMarkdown>
+              <MessageMarkdown>
+                {data[0].job_title || 'No title'}
+              </MessageMarkdown>
               <ButtonLink
                 className=''
                 href={data[0].job_url}
@@ -51,12 +50,8 @@ export default async function LearnMorePage({
               </span>{' '}
               {data[0].sender_name.slice(6) || 'No sender'}
             </h4>
-            <MessageMarkdown>
-              ---
-            </MessageMarkdown>
-            <MessageMarkdown>
-              {data[0].email_body || 'No body'}
-            </MessageMarkdown>
+            <MessageMarkdown>---</MessageMarkdown>
+            <MessageMarkdown>{data[0].email_body || 'No body'}</MessageMarkdown>
           </div>
         </section>
       </div>

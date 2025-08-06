@@ -11,7 +11,7 @@ export interface OpenAIOutput {
   job_title: string;
   organization: string;
   url: string;
-  body:string;
+  body: string;
   organization_domain: string;
 }
 

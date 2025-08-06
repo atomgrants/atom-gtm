@@ -79,7 +79,7 @@ export default function JobsContent() {
             url: job.job_url, // map job_url to url
             time_posted: job.time, // map time to time_posted
             jobId: job.id,
-          organization_domain: job.organization_domain
+            organization_domain: job.organization_domain,
           }));
         setJobs(jobsForCard);
       } else {
@@ -90,7 +90,7 @@ export default function JobsContent() {
           url: job.job_url, // map job_url to url
           time_posted: job.time, // map time to time_posted
           jobId: job.id,
-          organization_domain: job.organization_domain
+          organization_domain: job.organization_domain,
         }));
         setJobs(jobsForCard);
       }
@@ -109,13 +109,20 @@ export default function JobsContent() {
       const mostRecentJobs = await getJobFromDb();
       if (Array.isArray(mostRecentJobs)) {
         const jobsForCard = mostRecentJobs.map(
-          ({ job_title, organization, job_url, time, id, organization_domain }) => ({
+          ({
+            job_title,
+            organization,
+            job_url,
+            time,
+            id,
+            organization_domain,
+          }) => ({
             job_title,
             organization,
             url: job_url, // map job_url to url
             time_posted: time, // map time to time_posted
             jobId: id,
-            organization_domain
+            organization_domain,
           })
         );
         setJobs(jobsForCard);

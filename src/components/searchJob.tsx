@@ -1,10 +1,10 @@
 'use client';
 
 import { Search } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 import { useSearch } from '@/components/providers/searchContext';
 import { Input } from '@/components/ui/input';
-import { usePathname } from 'next/navigation';
 
 export default function SearchJob() {
   const { searchResult, setSearchResult } = useSearch();

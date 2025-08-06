@@ -32,14 +32,14 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
                 </div>
                 <div />
                 <div className='pr-5'>
-          <ButtonLink
-            className='mt-10 block text-center'
-                  href="mailto:tomer@atomgrants.com?subject=Job%20Post%20Submission&body=Please%20include%20your%20job%20details%20here."
-            variant='light'
-            size='sm'
-          >
-            Submit a job post?
-          </ButtonLink>
+                  <ButtonLink
+                    className='mt-10 block text-center'
+                    href='mailto:tomer@atomgrants.com?subject=Job%20Post%20Submission&body=Please%20include%20your%20job%20details%20here.'
+                    variant='light'
+                    size='sm'
+                  >
+                    Submit a job post?
+                  </ButtonLink>
                 </div>
               </div>
               <div className='w-full flex justify-center'>

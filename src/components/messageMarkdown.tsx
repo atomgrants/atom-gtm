@@ -1,9 +1,9 @@
-import React, { memo } from "react";
-import Link from "next/link";
-import ReactMarkdown, { type Components } from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import remarkBreaks from "remark-breaks";
-import remarkGfm from "remark-gfm";
+import Link from 'next/link';
+import React, { memo } from 'react';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
 
 //import { CodeBlock } from "./code-block";
 
@@ -13,7 +13,7 @@ const components: Partial<Components> & { card: any } = {
   ol: ({ node, children, ...props }: any) => {
     return (
       <ol
-        className="my-4 ml-6 list-outside list-decimal space-y-2 text-foreground"
+        className='my-4 ml-6 list-outside list-decimal space-y-2 text-foreground'
         {...props}
       >
         {children}
@@ -22,7 +22,7 @@ const components: Partial<Components> & { card: any } = {
   },
   li: ({ node, children, ...props }: any) => {
     return (
-      <li className="pl-1 leading-relaxed" {...props}>
+      <li className='pl-1 leading-relaxed' {...props}>
         {children}
       </li>
     );
@@ -30,7 +30,7 @@ const components: Partial<Components> & { card: any } = {
   ul: ({ node, children, ...props }) => {
     return (
       <ul
-        className="my-4 ml-0 list-outside list-disc space-y-2 text-foreground md:ml-6"
+        className='my-4 ml-0 list-outside list-disc space-y-2 text-foreground md:ml-6'
         {...props}
       >
         {children}
@@ -39,14 +39,14 @@ const components: Partial<Components> & { card: any } = {
   },
   strong: ({ node, children, ...props }) => {
     return (
-      <span className="font-semibold text-primary" {...props}>
+      <span className='font-semibold text-primary' {...props}>
         {children}
       </span>
     );
   },
   p: ({ node, children, ...props }) => {
     return (
-      <p className="my-3 leading-relaxed text-foreground" {...props}>
+      <p className='my-3 leading-relaxed text-foreground' {...props}>
         {children}
       </p>
     );
@@ -54,7 +54,7 @@ const components: Partial<Components> & { card: any } = {
   blockquote: ({ node, children, ...props }) => {
     return (
       <blockquote
-        className="my-6 border-l-4 border-muted pl-6 italic text-muted-foreground"
+        className='my-6 border-l-4 border-muted pl-6 italic text-muted-foreground'
         {...props}
       >
         {children}
@@ -64,9 +64,9 @@ const components: Partial<Components> & { card: any } = {
   a: ({ node, children, ...props }: any) => {
     return (
       <Link
-        className="font-medium text-atomred hover:text-atomred/80 hover:underline dark:text-atomred dark:hover:text-atomred/80"
-        target="_blank"
-        rel="noreferrer"
+        className='font-medium text-atomred hover:text-atomred/80 hover:underline dark:text-atomred dark:hover:text-atomred/80'
+        target='_blank'
+        rel='noreferrer'
         {...props}
       >
         {children}
@@ -76,7 +76,7 @@ const components: Partial<Components> & { card: any } = {
   h1: ({ node, children, ...props }) => {
     return (
       <h1
-        className="my-6 scroll-m-20 text-3xl font-bold tracking-tight text-primary"
+        className='my-6 scroll-m-20 text-3xl font-bold tracking-tight text-primary'
         {...props}
       >
         {children}
@@ -86,7 +86,7 @@ const components: Partial<Components> & { card: any } = {
   h2: ({ node, children, ...props }) => {
     return (
       <h2
-        className="my-4 scroll-m-20 text-xl font-semibold tracking-tight text-primary"
+        className='my-4 scroll-m-20 text-xl font-semibold tracking-tight text-primary'
         {...props}
       >
         {children}
@@ -96,7 +96,7 @@ const components: Partial<Components> & { card: any } = {
   h3: ({ node, children, ...props }) => {
     return (
       <h3
-        className="my-4 scroll-m-20 text-lg font-semibold tracking-tight text-primary"
+        className='my-4 scroll-m-20 text-lg font-semibold tracking-tight text-primary'
         {...props}
       >
         {children}
@@ -106,7 +106,7 @@ const components: Partial<Components> & { card: any } = {
   h4: ({ node, children, ...props }) => {
     return (
       <h4
-        className="my-4 scroll-m-20 text-base font-semibold tracking-tight text-primary"
+        className='my-4 scroll-m-20 text-base font-semibold tracking-tight text-primary'
         {...props}
       >
         {children}
@@ -116,7 +116,7 @@ const components: Partial<Components> & { card: any } = {
   h5: ({ node, children, ...props }) => {
     return (
       <h5
-        className="my-4 scroll-m-20 text-sm font-semibold tracking-tight text-primary"
+        className='my-4 scroll-m-20 text-sm font-semibold tracking-tight text-primary'
         {...props}
       >
         {children}
@@ -126,7 +126,7 @@ const components: Partial<Components> & { card: any } = {
   h6: ({ node, children, ...props }) => {
     return (
       <h6
-        className="my-4 scroll-m-20 text-sm font-semibold tracking-tight text-primary"
+        className='my-4 scroll-m-20 text-sm font-semibold tracking-tight text-primary'
         {...props}
       >
         {children}
@@ -134,12 +134,12 @@ const components: Partial<Components> & { card: any } = {
     );
   },
   hr: ({ ...props }) => {
-    return <hr className="border-px my-4" {...props} />;
+    return <hr className='border-px my-4' {...props} />;
   },
   table: ({ children, ...props }) => {
     return (
-      <div className="w-full overflow-y-auto rounded-md border">
-        <table className="my-0 w-full" {...props}>
+      <div className='w-full overflow-y-auto rounded-md border'>
+        <table className='my-0 w-full' {...props}>
           {children}
         </table>
       </div>
@@ -147,28 +147,28 @@ const components: Partial<Components> & { card: any } = {
   },
   thead: ({ children, ...props }) => {
     return (
-      <thead className="border-b bg-muted/50" {...props}>
+      <thead className='border-b bg-muted/50' {...props}>
         {children}
       </thead>
     );
   },
   tbody: ({ children, ...props }) => {
     return (
-      <tbody className="divide-y" {...props}>
+      <tbody className='divide-y' {...props}>
         {children}
       </tbody>
     );
   },
   tr: ({ children, ...props }) => {
     return (
-      <tr className="divide-x" {...props}>
+      <tr className='divide-x' {...props}>
         {children}
       </tr>
     );
   },
   th: ({ children, ...props }) => {
     return (
-      <th className="px-4 py-3 text-left font-medium" {...props}>
+      <th className='px-4 py-3 text-left font-medium' {...props}>
         {children}
       </th>
     );
@@ -176,15 +176,15 @@ const components: Partial<Components> & { card: any } = {
   td: ({ children, ...props }: any) => {
     // Convert <br> tags to line breaks to ensure they render properly
     const processedChildren = React.Children.map(children, (child) => {
-      if (typeof child === "string") {
-        return child.replace(/<br>/g, "\n");
+      if (typeof child === 'string') {
+        return child.replace(/<br>/g, '\n');
       }
       return child;
     });
 
     return (
       <td
-        className="whitespace-pre-line border px-4 py-2 align-middle"
+        className='whitespace-pre-line border px-4 py-2 align-middle'
         {...props}
       >
         {processedChildren}
@@ -193,18 +193,18 @@ const components: Partial<Components> & { card: any } = {
   },
   card: ({ children, ...props }: any) => (
     <div
-      className="rounded-xl border bg-white px-4 py-2 shadow dark:bg-zinc-800"
+      className='rounded-xl border bg-white px-4 py-2 shadow dark:bg-zinc-800'
       {...props}
     >
       {children}
     </div>
   ),
   div: ({ node, children, ...props }: any) => {
-    if (props["data-label"]) {
+    if (props['data-label']) {
       // children is an array of strings or nodes; join if needed
       const markdownContent = React.Children.toArray(children)
-        .map((child) => (typeof child === "string" ? child : ""))
-        .join("");
+        .map((child) => (typeof child === 'string' ? child : ''))
+        .join('');
 
       // Function to check if a string contains a date and if it's in the past
       const processDateContent = (content: string) => {
@@ -214,18 +214,20 @@ const components: Partial<Components> & { card: any } = {
         return content.replace(dateRegex, (match) => {
           const date = new Date(match);
           const isPast = date < new Date();
-          return `<span class="${isPast ? "text-atomred font-medium" : ""}">${match}</span>`;
+          return `<span class="${
+            isPast ? 'text-atomred font-medium' : ''
+          }">${match}</span>`;
         });
       };
 
       const processedContent = processDateContent(markdownContent);
 
       return (
-        <p className="my-2 leading-relaxed text-foreground">
-          <span className="whitespace-nowrap text-sm font-semibold">
-            {props["data-label"]}
+        <p className='my-2 leading-relaxed text-foreground'>
+          <span className='whitespace-nowrap text-sm font-semibold'>
+            {props['data-label']}
           </span>
-          {"  "}
+          {'  '}
           {/* Render markdown inline */}
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -253,7 +255,7 @@ type MessageMarkdownProps = {
 
 const NonMemoizedMarkdown = ({ children }: MessageMarkdownProps) => {
   return (
-    <div className="prose prose-zinc max-w-none text-sm dark:prose-invert">
+    <div className='prose prose-zinc max-w-none text-sm dark:prose-invert'>
       <ReactMarkdown
         remarkPlugins={remarkPlugins}
         rehypePlugins={[rehypeRaw]}

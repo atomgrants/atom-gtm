@@ -41,7 +41,6 @@ Now extract from this input:
 // Example format:
 // [{"sender_name": "John Doe", "job_title": "Software Engineer", "organization": "Tech Corp", "url": "https://example.com/apply"}]
 
-
 // Input:`;
 
 export const prompt = `Extract job details from each email in order. Return EXACTLY the same number of objects as input.

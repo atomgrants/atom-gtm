@@ -17,6 +17,33 @@ export const insertJob = async (job: any) => {
   }
 };
 
+export const removeExpiredJobs = async () => {
+  // Calculate the date 40 days ago
+  const fortyDaysAgo = new Date();
+  fortyDaysAgo.setDate(fortyDaysAgo.getDate() - 40);
+
+  const { data, error } = await supabaseAdmin
+    .from('jobs')
+    .delete()
+    .lt('created_at', fortyDaysAgo.toISOString())
+    .select();
+
+  if (error) {
+    console.error('Error deleting expired jobs:', error);
+    return {
+      success: false,
+      message: 'Failed to delete expired jobs',
+      error,
+    };
+  }
+
+  return {
+    success: true,
+    deletedCount: data?.length || 0,
+    message: `Deleted ${data?.length || 0} jobs older than 40`,
+  };
+};
+
 export const convertJobToDbFormat = (
   jobPost: EmailInsert,
   openaiOutput: OpenAIOutput

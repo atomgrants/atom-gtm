@@ -56,8 +56,7 @@ export async function GET(request: Request) {
 
   processJobEmail(jobEmails);
 
-  console.log(data.length);
-  //console.log(data);
+  //console.log(data.length);
 
   return NextResponse.json({
     success: true,

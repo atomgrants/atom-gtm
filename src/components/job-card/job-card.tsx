@@ -17,11 +17,17 @@ const JobCard = ({
   url,
   time_posted,
   jobId,
+  organization_domain
 }: JobInfo) => {
   const pastDate: any = new Date(time_posted);
   const today: any = new Date();
   const diffMs: any = today - pastDate; //difference in milliseconds
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const universityDomain = "mit.edu";
+//const logoUrl = `https://api.ritekit.com/v1/images/logo?domain=${universityDomain}&size=200`;
+//const logoUrl= `https://logo.clearbit.com/${universityDomain}`
+const logoUrl = `https://www.google.com/s2/favicons?domain=${organization_domain}&sz=128`
+
 
   // Format the time display
   const getTimeDisplay = () => {
@@ -42,7 +48,7 @@ const JobCard = ({
     <Card className='w-[340px] h-[300px] flex flex-col items-center justify-center overflow-hidden'>
       <CardHeader className='w-full'>
         <Avatar className='mb-5'>
-          <AvatarImage src='https://github.com/evilrabbit.png' />
+          <AvatarImage src={logoUrl} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <CardTitle className='line-clamp-1 w-full'>{job_title}</CardTitle>

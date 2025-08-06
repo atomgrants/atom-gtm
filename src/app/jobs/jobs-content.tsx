@@ -79,6 +79,7 @@ export default function JobsContent() {
             url: job.job_url, // map job_url to url
             time_posted: job.time, // map time to time_posted
             jobId: job.id,
+          organization_domain: job.organization_domain
           }));
         setJobs(jobsForCard);
       } else {
@@ -89,6 +90,7 @@ export default function JobsContent() {
           url: job.job_url, // map job_url to url
           time_posted: job.time, // map time to time_posted
           jobId: job.id,
+          organization_domain: job.organization_domain
         }));
         setJobs(jobsForCard);
       }
@@ -107,12 +109,13 @@ export default function JobsContent() {
       const mostRecentJobs = await getJobFromDb();
       if (Array.isArray(mostRecentJobs)) {
         const jobsForCard = mostRecentJobs.map(
-          ({ job_title, organization, job_url, time, id }) => ({
+          ({ job_title, organization, job_url, time, id, organization_domain }) => ({
             job_title,
             organization,
             url: job_url, // map job_url to url
             time_posted: time, // map time to time_posted
             jobId: id,
+            organization_domain
           })
         );
         setJobs(jobsForCard);
@@ -160,7 +163,7 @@ export default function JobsContent() {
     <section className='flex flex-col items-center'>
       <div className='mt-4'>
         <ul className='grid grid-cols-3 gap-x-7 auto-rows-[330px] justify-center'>
-          {isLoading
+          {isLoading && !searchResult
             ? Array.from({ length: JOBS_PER_PAGE }).map((_, index) => (
                 <li key={`loading-${index}`}>
                   <CardSkeleton />
@@ -169,11 +172,12 @@ export default function JobsContent() {
             : currentJobs.map((job, index) => (
                 <li key={index}>
                   <JobCard
-                    job_title={job.job_title}
-                    organization={job.organization}
+                    job_title={job.job_title.slice(5)}
+                    organization={job.organization.slice(5)}
                     url={job.url}
                     time_posted={job.time_posted}
                     jobId={job.jobId}
+                    organization_domain={job.organization_domain}
                   />
                 </li>
               ))}

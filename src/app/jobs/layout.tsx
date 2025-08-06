@@ -2,9 +2,10 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import BackToJobButton from '@/components/buttons/BackToJobButton';
+import ButtonLink from '@/components/links/ButtonLink';
 import { SearchProvider } from '@/components/providers/searchContext';
 import SearchJob from '@/components/searchJob';
-import BackToJobButton from '@/components/buttons/BackToJobButton';
 
 export default function JobLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,12 +13,12 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
       <body>
         <SearchProvider>
           <div className='flex flex-col min-h-screen bg-white'>
-            <main className='flex flex-col items-center'>
+            <main className='flex-1 flex flex-col items-center'>
               <Head>
                 <title>Atom Job Posting Board</title>
               </Head>
               <div className='grid grid-cols-[auto_1fr_auto] items-center w-full px-5 mt-6'>
-                <div className=' flex flex-start ml-5 mb-6 gap-4'>
+                <div className='flex flex-start ml-5 mb-6 gap-4'>
                   <Link href='https://atomgrants.com/'>
                     <Image
                       src='/images/atom-logo.png'
@@ -28,6 +29,17 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
                     />
                   </Link>
                   <BackToJobButton />
+                </div>
+                <div />
+                <div className='pr-5'>
+          <ButtonLink
+            className='mt-10 block text-center'
+                  href="mailto:tomer@atomgrants.com?subject=Job%20Post%20Submission&body=Please%20include%20your%20job%20details%20here."
+            variant='light'
+            size='sm'
+          >
+            Submit a job post?
+          </ButtonLink>
                 </div>
               </div>
               <div className='w-full flex justify-center'>

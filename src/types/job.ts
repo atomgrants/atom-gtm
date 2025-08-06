@@ -11,6 +11,8 @@ export interface OpenAIOutput {
   job_title: string;
   organization: string;
   url: string;
+  body:string;
+  organization_domain: string;
 }
 
 export interface JobInfo {
@@ -19,4 +21,5 @@ export interface JobInfo {
   url: string;
   time_posted: string;
   jobId: string;
+  organization_domain: string;
 }

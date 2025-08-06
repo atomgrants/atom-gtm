@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
-import { JobInsert, OpenAIOutput } from '@/types/job';
+import { OpenAIOutput } from '@/types/job';
 
 export const insertJob = async (job: any) => {
   const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
@@ -29,6 +29,7 @@ export const convertJobToDbFormat = (
       job_title: '',
       organization: '',
       job_url: '',
+      organization_domain: '',
       time: '',
     };
   }
@@ -37,7 +38,8 @@ export const convertJobToDbFormat = (
     job_title: openaiOutput.job_title || '',
     organization: openaiOutput.organization || '',
     job_url: openaiOutput.url || '',
-    email_body: jobPost.body || '',
+    email_body: openaiOutput.body || '',
+    organization_domain: openaiOutput.organization_domain || '',
     time: jobPost.date_time_sent || '',
   };
 };

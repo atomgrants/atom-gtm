@@ -31,9 +31,9 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
                   <BackToJobButton />
                 </div>
                 <div />
-                <div className='pr-5'>
+                <div className='pr-5 mb-6'>
                   <ButtonLink
-                    className='mt-10 block text-center'
+                    className='block text-center'
                     href='mailto:tomer@atomgrants.com?subject=Job%20Post%20Submission&body=Please%20include%20your%20job%20details%20here.'
                     variant='light'
                     size='sm'

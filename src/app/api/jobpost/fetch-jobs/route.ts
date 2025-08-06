@@ -2,10 +2,14 @@ import { NextResponse } from 'next/server';
 
 import { processJobEmail } from '@/lib/openai';
 import { supabaseAdmin } from '@/lib/supabase';
+import { removeExpiredJobs } from '@/lib/jobUtils';
 
 import { jobKeywords } from '@/data/keywords';
 
 export async function GET(request: Request) {
+  // Clean up expired jobs first
+  await removeExpiredJobs();
+
   // First, get the latest time from the jobs table
   const { data: latestJob, error: latestJobError } = await supabaseAdmin
     .from('jobs')

@@ -38,7 +38,7 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
                     variant='light'
                     size='sm'
                   >
-                    Submit a job post?
+                    Submit a job post
                   </ButtonLink>
                 </div>
               </div>

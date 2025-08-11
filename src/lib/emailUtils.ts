@@ -31,9 +31,11 @@ export const convertEmailToDbFormat = (email: any) => {
 };
 
 export const insertJob = async (job: JobInsert) => {
-  const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
+  const { error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
-    console.error('Error inserting job:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error inserting job:', error);
+    }
     return {
       success: false,
       message: 'Failed inserting job',
@@ -49,7 +51,9 @@ export const insertEmail = async (email: EmailInsert) => {
     .insert(email)
     .select();
   if (error) {
-    console.error('Error inserting email:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error inserting email:', error);
+    }
     return {
       success: false,
       message: 'Error inserting email',
@@ -89,7 +93,9 @@ export async function getLastSavedEmail() {
     .single();
 
   if (error) {
-    console.error(error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error(error);
+    }
     return null;
   }
 
@@ -177,7 +183,9 @@ export const discordNotification = async ({
       return true;
     })
     .catch((error) => {
-      console.error('Error sending discord notification', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error sending discord notification', error);
+      }
       return false;
     });
 };
@@ -204,7 +212,7 @@ function formatLinks(text: string): string {
 export function contentKeywordFilter(
   body: string,
   subject: string,
-  keyword: string[]
+  _keyword: string[]
 ): boolean {
   return keywords.some(
     (keyword) =>

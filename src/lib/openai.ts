@@ -19,7 +19,6 @@ const client = new OpenAI({
 });
 
 const cleanJobEmail = async (inputPrompt: string) => {
-  let jsonError;
   try {
     const response = await client.responses.create({
       model: 'gpt-4.1-nano',
@@ -27,12 +26,11 @@ const cleanJobEmail = async (inputPrompt: string) => {
       input: inputPrompt, //working on it
     });
 
-    jsonError = response.output_text
-      .replace(/^```json\s*/i, '')
-      .replace(/\s*```$/i, '');
     return JSON.parse(response.output_text);
   } catch (error) {
-    console.error(error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error(error);
+    }
     //console.log(jsonError)
   }
 };

@@ -6,9 +6,11 @@ import { EmailInsert } from '@/types/email';
 import { OpenAIOutput } from '@/types/job';
 
 export const insertJob = async (job: any) => {
-  const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
+  const { error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
-    console.error('Error inserting job:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error inserting job:', error);
+    }
     return {
       success: false,
       message: 'Failed inserting job',
@@ -29,7 +31,9 @@ export const removeExpiredJobs = async () => {
     .select();
 
   if (error) {
-    console.error('Error deleting expired jobs:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error deleting expired jobs:', error);
+    }
     return {
       success: false,
       message: 'Failed to delete expired jobs',

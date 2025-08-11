@@ -43,17 +43,31 @@ export default function PaginationMain({
     pageNumbers.push(i);
   }
 
-  const getVisiblePages = () => {
+  const getVisiblePages = (isMobile = false) => {
     const pages: (number | string)[] = [];
+    const maxPages = isMobile ? 3 : 7;
 
-    // If 7 or fewer pages, show all
-    if (totalPages <= 7) {
+    // If maxPages or fewer pages, show all
+    if (totalPages <= maxPages) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
       return pages;
     }
 
+    // Mobile: Show fewer pages
+    if (isMobile) {
+      if (currentPage <= 2) {
+        pages.push(1, 2, 3, 'ellipsis', totalPages);
+      } else if (currentPage >= totalPages - 1) {
+        pages.push(1, 'ellipsis', totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, 'ellipsis', currentPage, 'ellipsis', totalPages);
+      }
+      return pages;
+    }
+
+    // Desktop: Original logic
     // Always show first page
     pages.push(1);
 
@@ -83,47 +97,74 @@ export default function PaginationMain({
     return pages;
   };
 
-  const visiblePages = getVisiblePages();
+  // Check screen size for mobile pagination
+  const visiblePagesMobile = getVisiblePages(true);
+  const visiblePagesDesktop = getVisiblePages(false);
 
   return (
-    <Pagination>
-      <PaginationContent>
+    <Pagination className='w-full'>
+      <PaginationContent className='flex-wrap justify-center gap-1'>
         <PaginationItem>
           <PaginationPrevious
             href='#'
             onClick={handlePrevious}
-            className={
+            className={`text-sm ${
               currentPage <= 1
                 ? 'pointer-events-none opacity-50'
                 : 'cursor-pointer'
-            }
+            }`}
           />
         </PaginationItem>
-        {visiblePages.map((page, index) => (
-          <PaginationItem key={index}>
-            {page === 'ellipsis' ? (
-              <PaginationEllipsis />
-            ) : (
-              <PaginationLink
-                href='#'
-                onClick={(e) => handlePageClick(page as number, e)}
-                isActive={page === currentPage}
-                className='cursor-pointer'
-              >
-                {page}
-              </PaginationLink>
-            )}
-          </PaginationItem>
-        ))}
+        
+        {/* Mobile pagination: fewer pages */}
+        <div className='flex sm:hidden'>
+          {visiblePagesMobile.map((page, index) => (
+            <PaginationItem key={index}>
+              {page === 'ellipsis' ? (
+                <PaginationEllipsis />
+              ) : (
+                <PaginationLink
+                  href='#'
+                  onClick={(e) => handlePageClick(page as number, e)}
+                  isActive={page === currentPage}
+                  className='cursor-pointer text-sm'
+                >
+                  {page}
+                </PaginationLink>
+              )}
+            </PaginationItem>
+          ))}
+        </div>
+        
+        {/* Desktop pagination: more pages */}
+        <div className='hidden sm:flex'>
+          {visiblePagesDesktop.map((page, index) => (
+            <PaginationItem key={index}>
+              {page === 'ellipsis' ? (
+                <PaginationEllipsis />
+              ) : (
+                <PaginationLink
+                  href='#'
+                  onClick={(e) => handlePageClick(page as number, e)}
+                  isActive={page === currentPage}
+                  className='cursor-pointer'
+                >
+                  {page}
+                </PaginationLink>
+              )}
+            </PaginationItem>
+          ))}
+        </div>
+        
         <PaginationItem>
           <PaginationNext
             href='#'
             onClick={handleNext}
-            className={
+            className={`text-sm ${
               currentPage >= totalPages
                 ? 'pointer-events-none opacity-50'
                 : 'cursor-pointer'
-            }
+            }`}
           />
         </PaginationItem>
       </PaginationContent>

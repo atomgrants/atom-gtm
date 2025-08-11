@@ -19,6 +19,7 @@ export async function GET() {
 
   if (latestJobError) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error('Error fetching latest job:', latestJobError);
     }
     return NextResponse.json(
@@ -44,6 +45,7 @@ export async function GET() {
 
   if (error || !data) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
     return NextResponse.json(

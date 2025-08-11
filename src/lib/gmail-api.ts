@@ -1,5 +1,5 @@
 // Type for Gmail API client
-interface GmailAPI {
+export interface GmailAPI {
   users: {
     messages: {
       list: (params: {

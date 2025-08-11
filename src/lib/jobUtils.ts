@@ -9,6 +9,7 @@ export const insertJob = async (job: JobInsert) => {
   const { error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error('Error inserting job:', error);
     }
     return {
@@ -32,6 +33,7 @@ export const removeExpiredJobs = async () => {
 
   if (error) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error('Error deleting expired jobs:', error);
     }
     return {

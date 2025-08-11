@@ -42,6 +42,7 @@ export const insertJob = async (job: JobInsert) => {
   const { error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error('Error inserting job:', error);
     }
     return {
@@ -60,6 +61,7 @@ export const insertEmail = async (email: EmailInsert) => {
     .select();
   if (error) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error('Error inserting email:', error);
     }
     return {
@@ -102,6 +104,7 @@ export async function getLastSavedEmail() {
 
   if (error) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
     return null;
@@ -110,8 +113,12 @@ export async function getLastSavedEmail() {
   return data;
 }
 
+// Type alias for Google Gmail API client (complex Google library type)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GoogleGmailClient = any;
+
 /*get new emails since last saved email*/
-export async function getNewEmails(gmail: any) {
+export async function getNewEmails(gmail: GoogleGmailClient) {
   // Get the most recent email from database
   const lastSavedEmail = await getLastSavedEmail();
   let sinceDate: Date | null = null;
@@ -196,6 +203,7 @@ export const discordNotification = async ({
     })
     .catch((error) => {
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
         console.error('Error sending discord notification', error);
       }
       return false;

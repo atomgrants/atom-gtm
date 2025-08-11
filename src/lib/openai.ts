@@ -37,6 +37,7 @@ const cleanJobEmail = async (inputPrompt: string) => {
     return JSON.parse(response.output_text);
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
     //console.log(jsonError)

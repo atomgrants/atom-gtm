@@ -4,6 +4,7 @@ export interface JobInsert {
   organization: string;
   job_url: string;
   email_body: string;
+  organization_domain: string;
   time: string;
 }
 export interface OpenAIOutput {

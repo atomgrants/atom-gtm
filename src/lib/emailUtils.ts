@@ -11,8 +11,16 @@ import { JobInsert } from '@/types/job';
 // set it to true to send discord notification
 const isProduction = process.env.NODE_ENV === 'production';
 /**email utils***/
+// Type for Gmail API email response
+interface GmailEmail {
+  id: string;
+  headers?: Array<{ name: string; value: string }>;
+  text: string;
+  internalDate: string;
+}
+
 /*convert email to db format*/
-export const convertEmailToDbFormat = (email: any) => {
+export const convertEmailToDbFormat = (email: GmailEmail) => {
   const fromHeader =
     email.headers?.find((h: { name: string }) => h.name === 'From')?.value ||
     '';
@@ -31,9 +39,12 @@ export const convertEmailToDbFormat = (email: any) => {
 };
 
 export const insertJob = async (job: JobInsert) => {
-  const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
+  const { error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
-    console.error('Error inserting job:', error);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('Error inserting job:', error);
+    }
     return {
       success: false,
       message: 'Failed inserting job',
@@ -49,7 +60,10 @@ export const insertEmail = async (email: EmailInsert) => {
     .insert(email)
     .select();
   if (error) {
-    console.error('Error inserting email:', error);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('Error inserting email:', error);
+    }
     return {
       success: false,
       message: 'Error inserting email',
@@ -89,19 +103,26 @@ export async function getLastSavedEmail() {
     .single();
 
   if (error) {
-    console.error(error);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
     return null;
   }
 
   return data;
 }
 
+// Type alias for Google Gmail API client (complex Google library type)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GoogleGmailClient = any;
+
 /*get new emails since last saved email*/
-export async function getNewEmails(gmail: any) {
+export async function getNewEmails(gmail: GoogleGmailClient) {
   // Get the most recent email from database
   const lastSavedEmail = await getLastSavedEmail();
-  let sinceDate: any = null;
-  let lastSavedId: any = null;
+  let sinceDate: Date | null = null;
+  let lastSavedId: string | null = null;
   if (!lastSavedEmail) {
     // No emails in DB yet - get recent emails (last 24 hours)
     sinceDate = null;
@@ -111,20 +132,24 @@ export async function getNewEmails(gmail: any) {
   }
 
   let pageToken: string | undefined = undefined;
-  const allNewEmails: any[] = [];
+  const allNewEmails: GmailEmail[] = [];
   let length = 0;
   let nextPageToken: string | undefined = undefined;
   let attemptFetch = 0;
 
   do {
-    const result: any = await getEmails(gmail, 50, sinceDate, pageToken);
+    const result: {
+      emailsList: GmailEmail[];
+      length: number;
+      nextPageToken?: string;
+    } = await getEmails(gmail, 50, sinceDate, pageToken);
     let { emailsList } = result;
     length = result.length;
     attemptFetch += length;
     nextPageToken = result.nextPageToken;
     // Filter out emails with the same id as the last saved one
     if (lastSavedId) {
-      emailsList = emailsList.filter((email: any) => email.id !== lastSavedId);
+      emailsList = emailsList.filter((email: GmailEmail) => email.id !== lastSavedId);
 
       //if the length of emailsList is less than the length of the result, it means that the last email was already fetched
       //so we need to subtract 1 from the attemptFetch
@@ -177,7 +202,10 @@ export const discordNotification = async ({
       return true;
     })
     .catch((error) => {
-      console.error('Error sending discord notification', error);
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('Error sending discord notification', error);
+      }
       return false;
     });
 };
@@ -204,7 +232,7 @@ function formatLinks(text: string): string {
 export function contentKeywordFilter(
   body: string,
   subject: string,
-  keyword: string[]
+  _keyword: string[]
 ): boolean {
   return keywords.some(
     (keyword) =>

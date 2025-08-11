@@ -11,7 +11,10 @@ export function cn(...inputs: ClassValue[]) {
 export const getJobFromDb = async () => {
   const { data, error } = await supabaseClient.from('jobs').select('*');
   if (error) {
-    console.error('Error fetching jobs:', error);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching jobs:', error);
+    }
     return {
       success: false,
       message: 'Failed fetching job',

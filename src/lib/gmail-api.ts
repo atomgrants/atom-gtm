@@ -1,4 +1,37 @@
-export async function testConnection(gmail: any): Promise<number> {
+// Type for Gmail API client
+export interface GmailAPI {
+  users: {
+    messages: {
+      list: (params: {
+        userId: string;
+        maxResults?: number;
+        q?: string;
+        pageToken?: string;
+        format?: string;
+      }) => Promise<{
+        data: {
+          resultSizeEstimate?: number;
+          messages?: Array<{ id: string }>;
+          nextPageToken?: string;
+        };
+      }>;
+      get: (params: {
+        userId: string;
+        id: string;
+        format?: string;
+      }) => Promise<{
+        data: {
+          id: string;
+          snippet?: string;
+          payload?: GmailPayload;
+          internalDate?: string;
+        };
+      }>;
+    };
+  };
+}
+
+export async function testConnection(gmail: GmailAPI): Promise<number> {
   const response = await gmail.users.messages.list({
     userId: 'me',
     maxResults: 1,
@@ -7,7 +40,7 @@ export async function testConnection(gmail: any): Promise<number> {
 }
 
 export async function getEmails(
-  gmail: any,
+  gmail: GmailAPI,
   count: number,
   sinceDate: Date | null,
   pageToken?: string
@@ -44,7 +77,7 @@ export async function getEmails(
         id: msg.id,
         format: 'full',
       });
-      const { text } = extractEmailBody(msgDetail.data.payload);
+      const { text } = extractEmailBody(msgDetail.data.payload || {});
       return {
         id: msg.id,
         snippet: msgDetail.data.snippet,
@@ -108,8 +141,16 @@ function extractReplyContent(body: string): string {
   return body.slice(0, minIndex).trim();
 }
 
-function extractEmailBody(payload: any): { text: string; html: string } {
-  function findText(part: any): string | null {
+// Type for Gmail payload structure
+interface GmailPayload {
+  mimeType?: string;
+  body?: { data?: string };
+  parts?: GmailPayload[];
+  headers?: Array<{ name: string; value: string }>;
+}
+
+function extractEmailBody(payload: GmailPayload): { text: string; html: string } {
+  function findText(part: GmailPayload): string | null {
     if (part.mimeType === 'text/plain' && part.body && part.body.data) {
       return Buffer.from(part.body.data, 'base64').toString('utf-8');
     }
@@ -125,7 +166,7 @@ function extractEmailBody(payload: any): { text: string; html: string } {
     return null;
   }
 
-  function findHtml(part: any): string | null {
+  function findHtml(part: GmailPayload): string | null {
     if (part.mimeType === 'text/html' && part.body && part.body.data) {
       return Buffer.from(part.body.data, 'base64').toString('utf-8');
     }

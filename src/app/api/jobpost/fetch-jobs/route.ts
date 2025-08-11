@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 
+import { removeExpiredJobs } from '@/lib/jobUtils';
 import { processJobEmail } from '@/lib/openai';
 import { supabaseAdmin } from '@/lib/supabase';
-import { removeExpiredJobs } from '@/lib/jobUtils';
 
 import { jobKeywords } from '@/data/keywords';
 
-export async function GET(request: Request) {
+export async function GET() {
   // Clean up expired jobs first
   await removeExpiredJobs();
 
@@ -18,7 +18,10 @@ export async function GET(request: Request) {
     .limit(1);
 
   if (latestJobError) {
-    console.error('Error fetching latest job:', latestJobError);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching latest job:', latestJobError);
+    }
     return NextResponse.json(
       { error: latestJobError.message },
       { status: 500 }
@@ -41,7 +44,10 @@ export async function GET(request: Request) {
   const { data, error } = await query;
 
   if (error || !data) {
-    console.error(error);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
     return NextResponse.json(
       { error: error?.message || 'Unknown error' },
       { status: 500 }

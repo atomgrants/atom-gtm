@@ -63,7 +63,11 @@ export async function GET(request: Request) {
       );
     }
   } catch (error) {
-    console.error('Error fetching emails:', error);
+    // Log error in production for debugging
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching emails:', error);
+    }
     return NextResponse.json(
       {
         success: false,

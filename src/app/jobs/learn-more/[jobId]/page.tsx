@@ -5,7 +5,6 @@ import { MessageMarkdown } from '@/components/messageMarkdown';
 
 export default async function LearnMorePage({
   params,
-  searchParams,
 }: {
   params: { jobId: string };
   searchParams: { [key: string]: string | string[] | undefined };

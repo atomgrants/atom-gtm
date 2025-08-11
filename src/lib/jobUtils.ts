@@ -3,12 +3,15 @@ import crypto from 'crypto';
 import { supabaseAdmin } from '@/lib/supabase';
 
 import { EmailInsert } from '@/types/email';
-import { OpenAIOutput } from '@/types/job';
+import { JobInsert, OpenAIOutput } from '@/types/job';
 
-export const insertJob = async (job: any) => {
-  const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
+export const insertJob = async (job: JobInsert) => {
+  const { error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
-    console.error('Error inserting job:', error);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('Error inserting job:', error);
+    }
     return {
       success: false,
       message: 'Failed inserting job',
@@ -29,7 +32,10 @@ export const removeExpiredJobs = async () => {
     .select();
 
   if (error) {
-    console.error('Error deleting expired jobs:', error);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('Error deleting expired jobs:', error);
+    }
     return {
       success: false,
       message: 'Failed to delete expired jobs',
@@ -47,7 +53,7 @@ export const removeExpiredJobs = async () => {
 export const convertJobToDbFormat = (
   jobPost: EmailInsert,
   openaiOutput: OpenAIOutput
-) => {
+): JobInsert => {
   if (!openaiOutput) {
     //console.log('Error: Openai returned an Undefined output');
     //console.log(openaiOutput);
@@ -56,6 +62,7 @@ export const convertJobToDbFormat = (
       job_title: '',
       organization: '',
       job_url: '',
+      email_body: '',
       organization_domain: '',
       time: '',
     };

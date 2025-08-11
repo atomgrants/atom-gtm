@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import '@/lib/env';
 
@@ -15,6 +15,16 @@ import { useSearch } from '@/components/providers/searchContext';
 import PaginationMain from '@/components/utils/pagination';
 
 import { JobInfo } from '@/types/job';
+
+// Type for database job record
+interface JobRecord {
+  id: string;
+  job_title: string;
+  organization: string;
+  job_url: string;
+  time: string;
+  organization_domain: string;
+}
 
 const JOBS_PER_PAGE = 6;
 
@@ -47,7 +57,7 @@ export default function JobsContent() {
     );
   };
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -63,7 +73,7 @@ export default function JobsContent() {
 
       if (searchResult && searchResult.trim()) {
         const jobsForCard = mostRecentJobs
-          .filter((job: any) => {
+          .filter((job: JobRecord) => {
             return (
               job.job_title
                 .toLowerCase()
@@ -73,7 +83,7 @@ export default function JobsContent() {
                 .includes(searchResult.toLowerCase())
             );
           })
-          .map((job: any) => ({
+          .map((job: JobRecord) => ({
             job_title: job.job_title,
             organization: job.organization,
             url: job.job_url, // map job_url to url
@@ -84,7 +94,7 @@ export default function JobsContent() {
         setJobs(jobsForCard);
       } else {
         // If no search term, show all jobs
-        const jobsForCard = mostRecentJobs.map((job: any) => ({
+        const jobsForCard = mostRecentJobs.map((job: JobRecord) => ({
           job_title: job.job_title,
           organization: job.organization,
           url: job.job_url, // map job_url to url
@@ -99,9 +109,9 @@ export default function JobsContent() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchResult]);
 
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -136,9 +146,9 @@ export default function JobsContent() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     const params = new URLSearchParams(searchParams);
     if (newPage === 1) {
       // Remove page param for page 1 (cleaner URLs)
@@ -149,22 +159,22 @@ export default function JobsContent() {
 
     const newUrl = params.toString() ? `/jobs?${params.toString()}` : '/jobs';
     router.push(newUrl);
-  };
+  }, [searchParams, router]);
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [fetchJobs]);
 
   useEffect(() => {
     if (!isLoading && totalPages > 0 && currentPage > totalPages) {
       handlePageChange(1);
     }
-  }, [totalPages, currentPage, isLoading]);
+  }, [totalPages, currentPage, isLoading, handlePageChange]);
 
   // Call handleSearch when searchResult changes
   useEffect(() => {
     handleSearch();
-  }, [searchResult]);
+  }, [handleSearch]);
 
   return (
     <section className='flex flex-col items-center'>

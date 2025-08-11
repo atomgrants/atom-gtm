@@ -19,11 +19,10 @@ const JobCard = ({
   jobId,
   organization_domain,
 }: JobInfo) => {
-  const pastDate: any = new Date(time_posted);
-  const today: any = new Date();
-  const diffMs: any = today - pastDate; //difference in milliseconds
+  const pastDate = new Date(time_posted);
+  const today = new Date();
+  const diffMs = today.getTime() - pastDate.getTime(); //difference in milliseconds
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const universityDomain = 'mit.edu';
   //const logoUrl = `https://api.ritekit.com/v1/images/logo?domain=${universityDomain}&size=200`;
   //const logoUrl= `https://logo.clearbit.com/${universityDomain}`
   const logoUrl = `https://www.google.com/s2/favicons?domain=${organization_domain}&sz=128`;

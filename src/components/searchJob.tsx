@@ -24,7 +24,7 @@ export default function SearchJob() {
           onChange={(e) => setSearchResult(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              console.log(searchResult);
+              // Handle search on Enter - add search functionality here
             }
           }}
         />

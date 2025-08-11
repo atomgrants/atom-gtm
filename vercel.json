@@ -6,7 +6,7 @@
     },
     {
 
-      "path": "/api/cron/fetch-jobs",
+      "path": "/api/jobpost/fetch-jobs",
       "schedule": "0 9 * * 1"
     }
 

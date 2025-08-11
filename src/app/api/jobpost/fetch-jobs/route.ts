@@ -6,7 +6,19 @@ import { supabaseAdmin } from '@/lib/supabase';
 
 import { jobKeywords } from '@/data/keywords';
 
-export async function GET() {
+export async function GET(request: Request) {
+
+  const cronSecret = process.env.CRON_SECRET;
+  const authHeader = request.headers.get('Authorization');
+  if (authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Unauthorized',
+      },
+      { status: 401 }
+    );
+  }
   // Clean up expired jobs first
   await removeExpiredJobs();
 

@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import '@/lib/env';
 
@@ -57,7 +57,7 @@ export default function JobsContent() {
     );
   };
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -109,9 +109,9 @@ export default function JobsContent() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchResult]);
 
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -146,9 +146,9 @@ export default function JobsContent() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     const params = new URLSearchParams(searchParams);
     if (newPage === 1) {
       // Remove page param for page 1 (cleaner URLs)
@@ -159,22 +159,22 @@ export default function JobsContent() {
 
     const newUrl = params.toString() ? `/jobs?${params.toString()}` : '/jobs';
     router.push(newUrl);
-  };
+  }, [searchParams, router]);
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [fetchJobs]);
 
   useEffect(() => {
     if (!isLoading && totalPages > 0 && currentPage > totalPages) {
       handlePageChange(1);
     }
-  }, [totalPages, currentPage, isLoading]);
+  }, [totalPages, currentPage, isLoading, handlePageChange]);
 
   // Call handleSearch when searchResult changes
   useEffect(() => {
     handleSearch();
-  }, [searchResult]);
+  }, [handleSearch]);
 
   return (
     <section className='flex flex-col items-center'>

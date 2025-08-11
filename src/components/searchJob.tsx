@@ -14,10 +14,10 @@ export default function SearchJob() {
   if (!show) return null;
 
   return (
-    <div>
-      <div className='relative'>
+    <div className='w-full px-4 sm:px-6 md:px-0'>
+      <div className='relative max-w-4xl mx-auto md:max-w-none md:w-[1070px]'>
         <Input
-          className='w-[1070px] max-w-full text-left pl-10'
+          className='w-full text-left pl-10'
           type='search'
           placeholder='search job'
           value={searchResult}

@@ -178,16 +178,16 @@ export default function JobsContent() {
 
   return (
     <section className='flex flex-col items-center'>
-      <div className='mt-4'>
-        <ul className='grid grid-cols-3 gap-x-7 auto-rows-[330px] justify-center'>
+      <div className='mt-6 md:mt-4'>
+        <ul className='grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-7 md:auto-rows-[300px] justify-center'>
           {isLoading && !searchResult
             ? Array.from({ length: JOBS_PER_PAGE }).map((_, index) => (
-                <li key={`loading-${index}`}>
+                <li key={`loading-${index}`} className='md:w-auto'>
                   <CardSkeleton />
                 </li>
               ))
             : currentJobs.map((job, index) => (
-                <li key={index}>
+                <li key={index} className='md:w-auto'>
                   <JobCard
                     job_title={job.job_title.slice(5)}
                     organization={job.organization.slice(5)}
@@ -200,20 +200,40 @@ export default function JobsContent() {
               ))}
         </ul>
       </div>
-      <div className='w-full max-w-4xl relative flex justify-center items-center'>
-        {!isLoading && !error && totalPages > 1 && (
-          <PaginationMain
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
-        {!isLoading && !error && totalJobs > 0 && (
-          <div className='absolute right-0 text-sm text-gray-600'>
-            Showing {startIndex + 1}-{Math.min(endIndex, totalJobs)} of{' '}
-            {totalJobs} jobs
-          </div>
-        )}
+      <div className='w-full max-w-4xl mt-8 px-4 md:px-0'>
+        {/* Mobile Layout: Stacked */}
+        <div className='flex flex-col items-center gap-4 md:hidden'>
+          {!isLoading && !error && totalJobs > 0 && (
+            <div className='text-sm text-gray-600 text-center'>
+              Showing {startIndex + 1}-{Math.min(endIndex, totalJobs)} of{' '}
+              {totalJobs} jobs
+            </div>
+          )}
+          {!isLoading && !error && totalPages > 1 && (
+            <PaginationMain
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </div>
+        
+        {/* Desktop Layout: Side by side */}
+        <div className='hidden md:flex relative justify-center items-center'>
+          {!isLoading && !error && totalPages > 1 && (
+            <PaginationMain
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+          {!isLoading && !error && totalJobs > 0 && (
+            <div className='absolute right-0 text-sm text-gray-600'>
+              Showing {startIndex + 1}-{Math.min(endIndex, totalJobs)} of{' '}
+              {totalJobs} jobs
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

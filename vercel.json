@@ -3,6 +3,12 @@
     {
       "path": "/api/cron/fetch-emails",
       "schedule": "*/5 * * * *"
+    },
+    {
+
+      "path": "/api/cron/fetch-jobs",
+      "schedule": "0 9 * * 1"
     }
+
   ]
 }

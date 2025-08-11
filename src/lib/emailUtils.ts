@@ -11,8 +11,16 @@ import { JobInsert } from '@/types/job';
 // set it to true to send discord notification
 const isProduction = process.env.NODE_ENV === 'production';
 /**email utils***/
+// Type for Gmail API email response
+interface GmailEmail {
+  id: string;
+  headers?: Array<{ name: string; value: string }>;
+  text: string;
+  internalDate: string;
+}
+
 /*convert email to db format*/
-export const convertEmailToDbFormat = (email: any) => {
+export const convertEmailToDbFormat = (email: GmailEmail) => {
   const fromHeader =
     email.headers?.find((h: { name: string }) => h.name === 'From')?.value ||
     '';
@@ -106,8 +114,8 @@ export async function getLastSavedEmail() {
 export async function getNewEmails(gmail: any) {
   // Get the most recent email from database
   const lastSavedEmail = await getLastSavedEmail();
-  let sinceDate: any = null;
-  let lastSavedId: any = null;
+  let sinceDate: Date | null = null;
+  let lastSavedId: string | null = null;
   if (!lastSavedEmail) {
     // No emails in DB yet - get recent emails (last 24 hours)
     sinceDate = null;
@@ -117,20 +125,24 @@ export async function getNewEmails(gmail: any) {
   }
 
   let pageToken: string | undefined = undefined;
-  const allNewEmails: any[] = [];
+  const allNewEmails: GmailEmail[] = [];
   let length = 0;
   let nextPageToken: string | undefined = undefined;
   let attemptFetch = 0;
 
   do {
-    const result: any = await getEmails(gmail, 50, sinceDate, pageToken);
+    const result: {
+      emailsList: GmailEmail[];
+      length: number;
+      nextPageToken?: string;
+    } = await getEmails(gmail, 50, sinceDate, pageToken);
     let { emailsList } = result;
     length = result.length;
     attemptFetch += length;
     nextPageToken = result.nextPageToken;
     // Filter out emails with the same id as the last saved one
     if (lastSavedId) {
-      emailsList = emailsList.filter((email: any) => email.id !== lastSavedId);
+      emailsList = emailsList.filter((email: GmailEmail) => email.id !== lastSavedId);
 
       //if the length of emailsList is less than the length of the result, it means that the last email was already fetched
       //so we need to subtract 1 from the attemptFetch

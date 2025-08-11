@@ -16,6 +16,16 @@ import PaginationMain from '@/components/utils/pagination';
 
 import { JobInfo } from '@/types/job';
 
+// Type for database job record
+interface JobRecord {
+  id: string;
+  job_title: string;
+  organization: string;
+  job_url: string;
+  time: string;
+  organization_domain: string;
+}
+
 const JOBS_PER_PAGE = 6;
 
 export default function JobsContent() {
@@ -63,7 +73,7 @@ export default function JobsContent() {
 
       if (searchResult && searchResult.trim()) {
         const jobsForCard = mostRecentJobs
-          .filter((job: any) => {
+          .filter((job: JobRecord) => {
             return (
               job.job_title
                 .toLowerCase()
@@ -73,7 +83,7 @@ export default function JobsContent() {
                 .includes(searchResult.toLowerCase())
             );
           })
-          .map((job: any) => ({
+          .map((job: JobRecord) => ({
             job_title: job.job_title,
             organization: job.organization,
             url: job.job_url, // map job_url to url
@@ -84,7 +94,7 @@ export default function JobsContent() {
         setJobs(jobsForCard);
       } else {
         // If no search term, show all jobs
-        const jobsForCard = mostRecentJobs.map((job: any) => ({
+        const jobsForCard = mostRecentJobs.map((job: JobRecord) => ({
           job_title: job.job_title,
           organization: job.organization,
           url: job.job_url, // map job_url to url

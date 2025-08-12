@@ -18,8 +18,6 @@ export async function GET(request: Request) {
       { status: 401 }
     );
   }
-  // Clean up expired jobs first
-  await removeExpiredJobs();
 
   // First, get the latest time from the jobs table
   const { data: latestJob, error: latestJobError } = await supabaseAdmin
@@ -76,6 +74,9 @@ export async function GET(request: Request) {
   );
 
   processJobEmail(jobEmails);
+
+  // Clean up expired jobs after processing new ones
+  await removeExpiredJobs();
 
   //console.log(data.length);
 

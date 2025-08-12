@@ -91,7 +91,11 @@ export default function JobsContent() {
             jobId: job.id,
             organization_domain: job.organization_domain,
           }));
-        setJobs(jobsForCard);
+        // Sort jobs by time_posted in descending order (most recent first)
+        const sortedJobs = jobsForCard.sort((a, b) => 
+          new Date(b.time_posted).getTime() - new Date(a.time_posted).getTime()
+        );
+        setJobs(sortedJobs);
       } else {
         // If no search term, show all jobs
         const jobsForCard = mostRecentJobs.map((job: JobRecord) => ({
@@ -102,7 +106,11 @@ export default function JobsContent() {
           jobId: job.id,
           organization_domain: job.organization_domain,
         }));
-        setJobs(jobsForCard);
+        // Sort jobs by time_posted in descending order (most recent first)
+        const sortedJobs = jobsForCard.sort((a, b) => 
+          new Date(b.time_posted).getTime() - new Date(a.time_posted).getTime()
+        );
+        setJobs(sortedJobs);
       }
     } catch (error) {
       setError('Error handling job search');
@@ -135,7 +143,11 @@ export default function JobsContent() {
             organization_domain,
           })
         );
-        setJobs(jobsForCard);
+        // Sort jobs by time_posted in descending order (most recent first)
+        const sortedJobs = jobsForCard.sort((a, b) => 
+          new Date(b.time_posted).getTime() - new Date(a.time_posted).getTime()
+        );
+        setJobs(sortedJobs);
       } else {
         setError(mostRecentJobs.message || 'Unknown error');
         setJobs([]);

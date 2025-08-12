@@ -5,10 +5,8 @@
       "schedule": "*/5 * * * *"
     },
     {
-
       "path": "/api/jobpost/fetch-jobs",
       "schedule": "0 9 * * 1"
     }
-
   ]
 }

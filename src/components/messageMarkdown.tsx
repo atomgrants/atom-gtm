@@ -7,7 +7,9 @@ import remarkGfm from 'remark-gfm';
 
 //import { CodeBlock } from "./code-block";
 
-const components: Partial<Components> & { card: React.ComponentType<React.HTMLAttributes<HTMLDivElement>> } = {
+const components: Partial<Components> & {
+  card: React.ComponentType<React.HTMLAttributes<HTMLDivElement>>;
+} = {
   //code: CodeBlock,
   pre: ({ children }) => <>{children}</>,
   ol: ({ children, ...props }) => {
@@ -200,7 +202,10 @@ const components: Partial<Components> & { card: React.ComponentType<React.HTMLAt
       {children}
     </div>
   ),
-  div: ({ children, ...props }: React.ComponentProps<'div'> & { 'data-label'?: string }) => {
+  div: ({
+    children,
+    ...props
+  }: React.ComponentProps<'div'> & { 'data-label'?: string }) => {
     if (props['data-label']) {
       // children is an array of strings or nodes; join if needed
       const markdownContent = React.Children.toArray(children)

@@ -23,8 +23,6 @@ const JobCard = ({
   const today = new Date();
   const diffMs = today.getTime() - pastDate.getTime(); //difference in milliseconds
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  //const logoUrl = `https://api.ritekit.com/v1/images/logo?domain=${universityDomain}&size=200`;
-  //const logoUrl= `https://logo.clearbit.com/${universityDomain}`
   const logoUrl = `https://www.google.com/s2/favicons?domain=${organization_domain}&sz=128`;
 
   // Format the time display

@@ -43,7 +43,7 @@ export default function JobLayout({ children }: { children: React.ReactNode }) {
                     </ButtonLink>
                   </div>
                 </div>
-                
+
                 {/* Desktop Layout */}
                 <div className='hidden md:grid grid-cols-[auto_1fr_auto] items-center w-full'>
                   <div className='flex flex-start ml-5 mb-6 gap-4'>

@@ -53,7 +53,9 @@ export default async function LearnMorePage({
             </h4>
             <MessageMarkdown>---</MessageMarkdown>
             <div className='prose prose-sm sm:prose max-w-none'>
-              <MessageMarkdown>{data[0].email_body || 'No body'}</MessageMarkdown>
+              <MessageMarkdown>
+                {data[0].email_body || 'No body'}
+              </MessageMarkdown>
             </div>
           </div>
         </section>

@@ -12,7 +12,9 @@ if (!supabaseUrl) {
 }
 
 if (!supabaseAnonKey) {
-  throw new Error('Missing environment variable: NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  throw new Error(
+    'Missing environment variable: NEXT_PUBLIC_SUPABASE_ANON_KEY'
+  );
 }
 
 const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);

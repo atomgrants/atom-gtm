@@ -149,7 +149,9 @@ export async function getNewEmails(gmail: GoogleGmailClient) {
     nextPageToken = result.nextPageToken;
     // Filter out emails with the same id as the last saved one
     if (lastSavedId) {
-      emailsList = emailsList.filter((email: GmailEmail) => email.id !== lastSavedId);
+      emailsList = emailsList.filter(
+        (email: GmailEmail) => email.id !== lastSavedId
+      );
 
       //if the length of emailsList is less than the length of the result, it means that the last email was already fetched
       //so we need to subtract 1 from the attemptFetch

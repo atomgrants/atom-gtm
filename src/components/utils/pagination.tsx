@@ -115,7 +115,7 @@ export default function PaginationMain({
             }`}
           />
         </PaginationItem>
-        
+
         {/* Mobile pagination: fewer pages */}
         <div className='flex sm:hidden'>
           {visiblePagesMobile.map((page, index) => (
@@ -135,7 +135,7 @@ export default function PaginationMain({
             </PaginationItem>
           ))}
         </div>
-        
+
         {/* Desktop pagination: more pages */}
         <div className='hidden sm:flex'>
           {visiblePagesDesktop.map((page, index) => (
@@ -155,7 +155,7 @@ export default function PaginationMain({
             </PaginationItem>
           ))}
         </div>
-        
+
         <PaginationItem>
           <PaginationNext
             href='#'

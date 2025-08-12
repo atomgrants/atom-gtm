@@ -149,7 +149,10 @@ interface GmailPayload {
   headers?: Array<{ name: string; value: string }>;
 }
 
-function extractEmailBody(payload: GmailPayload): { text: string; html: string } {
+function extractEmailBody(payload: GmailPayload): {
+  text: string;
+  html: string;
+} {
   function findText(part: GmailPayload): string | null {
     if (part.mimeType === 'text/plain' && part.body && part.body.data) {
       return Buffer.from(part.body.data, 'base64').toString('utf-8');

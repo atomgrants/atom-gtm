@@ -7,7 +7,6 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { jobKeywords } from '@/data/keywords';
 
 export async function GET(request: Request) {
-
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = request.headers.get('Authorization');
   if (authHeader !== `Bearer ${cronSecret}`) {

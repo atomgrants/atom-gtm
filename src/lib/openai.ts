@@ -7,7 +7,6 @@ import {
   insertJob,
 } from '@/lib/jobUtils';
 
-//for testing
 import { prompt } from '@/data/openai_data';
 
 import { EmailInsert } from '@/types/email';
@@ -44,7 +43,10 @@ const cleanJobEmail = async (inputPrompt: string) => {
   }
 };
 
-const chunkArray = (arr: JobEmailForProcessing[], batchSize: number): JobEmailForProcessing[][] => {
+const chunkArray = (
+  arr: JobEmailForProcessing[],
+  batchSize: number
+): JobEmailForProcessing[][] => {
   const chunks: JobEmailForProcessing[][] = [];
   for (let i = 0; i < arr.length; i += batchSize) {
     chunks.push(arr.slice(i, i + batchSize));
@@ -57,15 +59,18 @@ const BATCH_SIZE = 10;
 // clean, format, and save Job Email
 export const processJobEmail = async (jobEmails: JobEmailForProcessing[]) => {
   // Convert to EmailInsert format for deduplication
-  const emailInsertFormat: EmailInsert[] = jobEmails.map(email => ({
+  const emailInsertFormat: EmailInsert[] = jobEmails.map((email) => ({
     ...email,
     sender_email_address: '',
     listserv_name: '',
-    gmail_message_id: ''
+    gmail_message_id: '',
   }));
   const deduplicatedEmails = deduplicateByBody(emailInsertFormat);
   // Use the deduplicated count but process original format
-  const batches = chunkArray(jobEmails.slice(0, deduplicatedEmails.length), BATCH_SIZE);
+  const batches = chunkArray(
+    jobEmails.slice(0, deduplicatedEmails.length),
+    BATCH_SIZE
+  );
   for (const batch of batches) {
     // Create one input string with whole batch as JSON
     const inputPrompt = `${prompt} ${JSON.stringify(batch)}`;
@@ -83,7 +88,7 @@ export const processJobEmail = async (jobEmails: JobEmailForProcessing[]) => {
         ...batch[i],
         sender_email_address: '',
         listserv_name: '',
-        gmail_message_id: ''
+        gmail_message_id: '',
       };
       const formatOpenaiOutput = convertJobToDbFormat(
         emailInsert,

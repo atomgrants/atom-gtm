@@ -148,18 +148,21 @@ export default function JobsContent() {
     }
   }, []);
 
-  const handlePageChange = useCallback((newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    if (newPage === 1) {
-      // Remove page param for page 1 (cleaner URLs)
-      params.delete('page');
-    } else {
-      params.set('page', newPage.toString());
-    }
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams);
+      if (newPage === 1) {
+        // Remove page param for page 1 (cleaner URLs)
+        params.delete('page');
+      } else {
+        params.set('page', newPage.toString());
+      }
 
-    const newUrl = params.toString() ? `/jobs?${params.toString()}` : '/jobs';
-    router.push(newUrl);
-  }, [searchParams, router]);
+      const newUrl = params.toString() ? `/jobs?${params.toString()}` : '/jobs';
+      router.push(newUrl);
+    },
+    [searchParams, router]
+  );
 
   useEffect(() => {
     fetchJobs();
@@ -217,7 +220,7 @@ export default function JobsContent() {
             />
           )}
         </div>
-        
+
         {/* Desktop Layout: Side by side */}
         <div className='hidden md:flex relative justify-center items-center'>
           {!isLoading && !error && totalPages > 1 && (

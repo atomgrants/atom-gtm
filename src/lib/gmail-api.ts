@@ -52,10 +52,12 @@ export async function getEmails(
     unixTimestamp = Math.floor(sinceDate.getTime() / 1000);
   }
 
+  // add any other senders here (listserv emails)
   const senders = [
     'resadm-l@lists.healthresearch.org',
     'esdrasntuyenabo40@gmail.com',
   ];
+  // if more senders concatenate with OR
   const query = `after:${unixTimestamp} (from:${senders[0]} OR from:${senders[1]})`;
 
   const response = await gmail.users.messages.list({

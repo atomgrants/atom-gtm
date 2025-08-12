@@ -34,7 +34,7 @@ export default async function LearnMorePage({
                 </MessageMarkdown>
               </div>
               <ButtonLink
-                className='w-full sm:w-auto shrink-0'
+                className='w-auto shrink-0'
                 href={data[0].job_url}
                 variant='dark'
                 size='sm'

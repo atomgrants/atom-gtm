@@ -6,7 +6,7 @@ import { EmailInsert } from '@/types/email';
 import { JobInsert, OpenAIOutput } from '@/types/job';
 
 export const insertJob = async (job: JobInsert) => {
-  const { error } = await supabaseAdmin.from('jobs').insert(job).select();
+  const { data, error } = await supabaseAdmin.from('jobs').insert(job).select();
   if (error) {
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
@@ -18,17 +18,18 @@ export const insertJob = async (job: JobInsert) => {
       status: 500,
     };
   }
+  //console.log(data);
 };
 
 export const removeExpiredJobs = async () => {
-  // Calculate the date 40 days ago
+  // Calculate the date 45 days ago
   const fortyDaysAgo = new Date();
-  fortyDaysAgo.setDate(fortyDaysAgo.getDate() - 40);
+  fortyDaysAgo.setDate(fortyDaysAgo.getDate() - 45);
 
   const { data, error } = await supabaseAdmin
     .from('jobs')
     .delete()
-    .lt('created_at', fortyDaysAgo.toISOString())
+    .lt('time', fortyDaysAgo.toISOString())
     .select();
 
   if (error) {
@@ -42,6 +43,7 @@ export const removeExpiredJobs = async () => {
       error,
     };
   }
+  //console.log('Deleted', data?.length, 'jobs');
 
   return {
     success: true,
